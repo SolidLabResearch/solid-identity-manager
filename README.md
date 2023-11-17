@@ -164,6 +164,12 @@ refresh the first tab, it will effectively retrieve the latest session.
 Storing sessions or tokens in localstorage or anywhere clientside is discouraged for security reasons.
 Perhaps with additional research, a workaround can be conceptualized that does not compromise security.
 
+### End-to-end testing
+
+To run end-to-end tests, you must first have built the extension (`npm run build`).
+Then the Playwright tests can be run with `npx playwright test` for headless mode.
+If you want to run the tests interactively, you can use `npx playwright test --ui`.
+
 ## License
 
 This code is copyrighted by [Ghent University – imec](http://idlab.ugent.be/) and

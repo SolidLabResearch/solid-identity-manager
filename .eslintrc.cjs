@@ -1,8 +1,8 @@
 module.exports = {
   root: true,
-  env: {browser: true, es2020: true, webextensions: true},
+  env: {browser: true, es2020: true, webextensions: true, node: true},
   extends: [
-    'eslint:recommended'
+    'eslint:recommended', 'plugin:playwright/recommended'
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs', 'webpack.*'],
   parserOptions: {ecmaVersion: 'latest', sourceType: 'module'},
@@ -68,6 +68,7 @@ module.exports = {
     'jsdoc/require-yields-check': 1, // Recommended
     // 'jsdoc/sort-tags': 1,
     'jsdoc/tag-lines': 1, // Recommended
-    'jsdoc/valid-types': 1 // Recommended
+    'jsdoc/valid-types': 1, // Recommended
+    'playwright/no-wait-for-timeout': 0
   },
 }
