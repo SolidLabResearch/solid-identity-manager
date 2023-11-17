@@ -8,7 +8,7 @@ export const test = base.extend({
     const context = await chromium.launchPersistentContext('', {
       headless: false,
       args: [
-        '--headless=new',
+        '--headless=new', // disable this line to run the tests in a visible browser window
         `--disable-extensions-except=${pathToExtension}`,
         `--load-extension=${pathToExtension}`,
       ],
