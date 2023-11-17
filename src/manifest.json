@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+
+  "name": "Solid Identity Extension",
+  "description": "Manage and switch between your Solid identities",
+  "version": "1.0",
+
+  "icons": {
+    "48": "solid-48.png"
+  },
+
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting"
+  ],
+
+  "host_permissions": [
+    "<all_urls>"
+  ],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Solid Authentication"
+  },
+
+  "background": {
+    "service_worker": "sw.js"
+  },
+
+  "externally_connectable": {
+    "matches": ["<all_urls>"]
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp8/7cZ41MjJFN2J4KUst6afFm/mrulNTpYfjZbLX0z8hI7uK6GnnOtInM3X7i7ZFOL/gP2Dv94g+FBFw7EdIL5+B4KpHYezncBeY2z1coaZB3ItOkDmXJqABR1V8rIKBni2/zKy9FUus3sjETyPB5geQEM60BPHKETB4yqWl0JxOMmYF8uOpuIflBCfQjIohqlhn2yL/jkES3IEg5P+jhUWNx6S30mK6vLe6KoBSa5AwjVxatrbxrdzcobwOKobconZwsf3DmYGbB6r7NDE+nZ5SKwebufCeXajJ/RJw95IYYsyKQ4uvUajqDsSkR6Fn/9DatvDLLaMx5cS7RbS2JwIDAQAB"
+}

@@ -1,0 +1,86 @@
+#identity-creation-page {
+  display: flex;
+  align-items: center;
+  background-color: #E5DFD3;
+  height: 100vh;
+}
+
+#identity-creation-page .avatar {
+  margin: 20px auto;
+}
+
+#identity-list {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+  justify-content: center;
+  width: 512px;
+}
+
+#confirm-dialog h2, #confirm-dialog h2 {
+  margin-bottom: 20px;
+}
+
+#confirm-dialog p {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+#confirm-dialog button {
+  margin-top: 20px;
+}
+
+.color-selection {
+  display: flex;
+  gap: 4px;
+  margin: 20px 0;
+  justify-content: center;
+}
+
+.color {
+  display: block;
+  background-color: #ccc;
+  width: 18px;
+  height: 18px;
+  border-radius: 18px;
+  border: 1px solid white;
+  box-shadow: none;
+
+  cursor: pointer;
+}
+
+.color.selected {
+  box-shadow: 0 0 0 2px #284be4;
+}
+
+.box {
+  padding: 20px;
+  margin: auto;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  background-color: white;
+}
+
+.login.box {
+  width: 300px;
+  text-align: center;
+}
+
+.settings.box {
+  text-align: center;
+}
+
+h2 {
+  font-size: 24px;
+}
+
+.identity-box {
+  padding: 20px;
+  width: 120px;
+  height: 120px;
+
+  border-radius: 8px;
+  border: 1px solid #ccc;
+
+  cursor: pointer;
+}
