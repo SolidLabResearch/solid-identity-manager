@@ -55,7 +55,7 @@ async function main() {
 
 /**
  * Posts a message to all connected apps (tabs) and internal windows/popups.
- * @param {string} message The message to broadcast.
+ * @param {string} message - The message to broadcast.
  */
 const broadcast = (message) => {
   internalPort.postMessage(message);
@@ -91,7 +91,7 @@ async function getIDPsFromWebID(webId) {
 
 /**
  * Message handler for all messages from popups and windows within the extension scope.
- * @param {object} message The received message.
+ * @param {object} message - The received message.
  * @param {string} message.type - The message type.
  */
 const handleInternalMessage = async (message) => {
@@ -223,7 +223,7 @@ const handleInternalMessage = async (message) => {
 
 /**
  * Message handler for all messages from a Solid App (separate context in a tab).
- * @param {object} message The message to send.
+ * @param {object} message - The message to send.
  * @param {string} message.type - The message type.
  * @param {object} message.data - The message data.
  */

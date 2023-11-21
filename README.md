@@ -2,7 +2,7 @@
 
 This Chrome extension currently acts as a remote control to **manage your Solid identities** and
 make it easy for the user to switch between their WebIDs.
-The way this works is by giving the user the option to add _profiles_ to the extension which 
+The way this works is by giving the user the option to add _profiles_ to the extension which
 it will store to persist over the course of its use.
 A profile describes either a WebID or an IDP.
 Subsequently, the profile gets a display name and
