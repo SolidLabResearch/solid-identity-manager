@@ -27,7 +27,7 @@ Each test is briefly described for easy reference.
 - **Test Steps**:
   - Open the popup page.
   - Click the 'Add' button.
-  - Verify that the new page title includes "Add a new SOLID profile".
+  - Verify that the new page title includes "Add a new Solid profile".
   - Ensure the heading "Add new profile" is visible.
 
 ### 4. Add New Profile Page Has All Necessary Input Fields
