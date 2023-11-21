@@ -1,4 +1,14 @@
+/**
+ * PopupPage is a test fixture that provides a page object for the extension's popup.
+ * By simply declaring a {popup} argument to the test function, you get a page object that you can use to interact with.
+ */
 export class PopupPage {
+  /**
+   * PopupPage constructor.
+   * @param context The Playwright BrowserContext.
+   * @param page The Playwright Page.
+   * @param extensionId The extension ID.
+   */
   constructor(context, page, extensionId) {
     this.context = context;
     this.page = page;
@@ -7,10 +17,19 @@ export class PopupPage {
     this.settingsButton = this.page.locator('#settings-button');
   }
 
+  /**
+   * Navigates to the extension's popup.
+   */
   async openPopup() {
     await this.page.goto(`chrome-extension://${this.extensionId}/popup.html`);
   }
 
+  /**
+   * Creates a profile with either an IDP or a WebID.
+   * @param profileName The profile name.
+   * @param idp The IDP.
+   * @param webId The WebID.
+   */
   async createProfile(profileName, idp, webId) {
     await this.openPopup();
     const pagePromise = this.context.waitForEvent('page');
@@ -36,6 +55,10 @@ export class PopupPage {
     await this.page.reload();
   }
 
+  /**
+   * Opens the settings page by clicking on the settings icon button on the popup page.
+   * @returns {Promise<*>}
+   */
   async openSettings() {
     const pagePromise = this.context.waitForEvent('page');
 
@@ -46,6 +69,10 @@ export class PopupPage {
     return popup;
   }
 
+  /**
+   * Opens the create profile page by clicking on the add button on the popup page.
+   * @returns {Promise<*>}
+   */
   async openNewProfile() {
     const pagePromise = this.context.waitForEvent('page');
 

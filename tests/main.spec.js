@@ -1,9 +1,5 @@
 import {test, expect} from './fixtures';
 
-// const WEBID_A = 'https://pod.playground.solidlab.be/a/profile/card#me';
-// const WEBID_B = 'https://pod.playground.solidlab.be/b/profile/card#me';
-// const WEBID_C = 'https://pod.playground.solidlab.be/c/profile/card#me';
-
 test('popup page has title', async ({page, popupPage}) => {
   await popupPage.openPopup();
   await expect(page).toHaveTitle(/Solid Identity Selector/);
