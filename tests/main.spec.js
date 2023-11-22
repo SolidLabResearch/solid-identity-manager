@@ -24,7 +24,7 @@ test('add button opens add-new-profile page', async ({ page, popupPage, context}
 
   const popup = await pagePromise;
   await popup.waitForLoadState();
-  await expect(popup).toHaveTitle(/Add a new SOLID profile/);
+  await expect(popup).toHaveTitle(/Add a new Solid profile/);
 
   await expect(popup.getByRole('heading', {
     name: 'Add new profile',
@@ -111,6 +111,7 @@ test('creating a profile adds it to list of profiles', async ({ page, popupPage}
 
 test('creating 2 profiles adds both to list of profiles', async ({page, popupPage}) => {
   await popupPage.createProfile('A Profile', 'WebId A');
+  await page.reload();
   await popupPage.createProfile('B Profile', 'WebId B');
 
   const identities = page.locator('section#identities');
@@ -125,13 +126,17 @@ test('profile header shows name and avatar of active profile', async ({page, pop
   await popupPage.createProfile('A Profile', 'WebId A');
   await expect(page.locator('#identity-short')).toHaveText('A Profile');
 
+  await page.reload();
+
   await popupPage.createProfile('B Profile', 'WebId B');
   await expect(page.locator('#identity-short')).toHaveText('B Profile');
 });
 
 test('switching profile activates correct one', async ({page, popupPage}) => {
   await popupPage.createProfile('A Profile', 'IDP A');
+  await page.reload();
   await popupPage.createProfile('B Profile', 'IDP B');
+  await page.reload();
   await popupPage.createProfile('C Profile', 'IDP C');
 
   await expect(page.locator('#identity-short')).toHaveText('C Profile');
@@ -157,7 +162,7 @@ test('switching profile activates correct one', async ({page, popupPage}) => {
 test('manage profiles popup display empty list if no profiles exist', async ({popupPage}) => {
   const settingsPage = await popupPage.openSettings();
 
-  await expect(settingsPage).toHaveTitle(/Manage SOLID profiles/);
+  await expect(settingsPage).toHaveTitle(/Manage Solid profiles/);
   await expect(settingsPage.getByRole('heading', {
     name: 'Your profiles',
   }),).toBeVisible();
