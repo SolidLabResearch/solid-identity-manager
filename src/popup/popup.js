@@ -136,8 +136,6 @@ const setActiveIdentity = (identity) => {
   document.getElementById('no-identities-prompt').classList.add('hidden');
   document.getElementById('identity-short').innerHTML = identity.displayName;
 
-  console.log(identity);
-
   if (identity.metadata?.name) {
     document.getElementById('full-name').innerHTML = identity.metadata.name;
   } else {

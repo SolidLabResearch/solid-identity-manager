@@ -1,7 +1,4 @@
 import {test, expect} from './fixtures';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const WEBID_ENDPOINT = 'https://example.com/PROFILEA/profile/card#me';
 
@@ -437,7 +434,6 @@ test('edits of WebID are persisted', async ({ popupPage }) => {
 });
 
 test('popup starts with the error section hidden', async ({ page }) => {
-  await expect(page.locator('#error-message-container')).toBeHidden();
   await expect(page.locator('#error-message-container')).toBeHidden();
 });
 
