@@ -70,15 +70,17 @@ section#identities {
   line-height: 32px;
 }
 
-.identity-row {
-  display: flex;
+#identity-list button, #add-identity-button {
+  font-weight: normal;
+  width: 100%;
+  border-radius: 0;
+  background: transparent;
+  gap: 8px;
+  justify-content: flex-start;
   padding: 8px 12px;
-  gap: 12px;
-
-  font-size: 12px;
-  line-height: 20px;
-
-  cursor: pointer;
+  &:hover {
+    background-color: #00000011;
+  }
 }
 
 .identity-row svg {
@@ -86,18 +88,11 @@ section#identities {
   width: 20px;
 }
 
-.identity-row:hover {
-  background-color: #00000011;
-}
-
-.control {
-  cursor: pointer;
-  padding: 10px;
-  border-radius: 20px;
-
+#settings-button {
+  background-color: transparent;
   transition: background-color 0.2s ease-in-out;
+  &:hover {
+    background-color: #eee;
+  }
 }
 
-.control:hover {
-  background-color: #eee;
-}

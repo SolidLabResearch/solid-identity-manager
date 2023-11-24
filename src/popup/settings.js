@@ -145,7 +145,7 @@ const generateColorSelection = () => {
 
   avatarColors.forEach(
     ({ id: currentColorId, color: textColor, background }) => {
-      const color = document.createElement('span');
+      const color = document.createElement('button');
       color.classList.add('color');
       color.setAttribute(
         'style',
@@ -211,6 +211,7 @@ const handleMessage = (message) => {
 const createIdentityBox = (identity) => {
   const identityBox = document.createElement('li');
   identityBox.classList.add('identity-box');
+  const button = document.createElement('button');
   const avatar = document.createElement('span');
   avatar.classList.add('avatar');
   avatar.setAttribute(
@@ -222,14 +223,16 @@ const createIdentityBox = (identity) => {
   avatar.innerHTML = identity.displayName.charAt(0);
   displayName.innerHTML = identity.displayName;
 
-  identityBox.appendChild(avatar);
-  identityBox.appendChild(displayName);
+  button.appendChild(avatar);
+  button.appendChild(displayName);
 
-  identityBox.addEventListener('click', () => {
+  button.addEventListener('click', () => {
     selectedIdentity = identity;
     populateEditDialog();
     profileEditDialog.show();
   });
+
+  identityBox.appendChild(button);
 
   return identityBox;
 };

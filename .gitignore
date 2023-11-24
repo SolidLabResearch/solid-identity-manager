@@ -3,3 +3,8 @@ node_modules
 .idea
 .DS_Store
 *.zip
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
