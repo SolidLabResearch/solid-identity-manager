@@ -5,9 +5,9 @@
 export class PopupPage {
   /**
    * PopupPage constructor.
-   * @param context The Playwright BrowserContext.
-   * @param page The Playwright Page.
-   * @param extensionId The extension ID.
+   * @param {*} context - The Playwright BrowserContext.
+   * @param {*} page - The Playwright Page.
+   * @param {string} extensionId - The extension ID.
    */
   constructor(context, page, extensionId) {
     this.context = context;
@@ -26,9 +26,9 @@ export class PopupPage {
 
   /**
    * Creates a profile with either an IDP or a WebID.
-   * @param profileName The profile name.
-   * @param idp The IDP.
-   * @param webId The WebID.
+   * @param {string} profileName - The profile name.
+   * @param {string} idp - The IDP.
+   * @param {string} webId - The WebID.
    */
   async createProfile(profileName, idp, webId) {
     await this.openPopup();
@@ -57,7 +57,7 @@ export class PopupPage {
 
   /**
    * Opens the settings page by clicking on the settings icon button on the popup page.
-   * @returns {Promise<*>}
+   * @returns {Promise<*>} Returns a promise of the settings page.
    */
   async openSettings() {
     const pagePromise = this.context.waitForEvent('page');
@@ -71,7 +71,7 @@ export class PopupPage {
 
   /**
    * Opens the create profile page by clicking on the add button on the popup page.
-   * @returns {Promise<*>}
+   * @returns {Promise<*>} Returns a promise of the popup page.
    */
   async openNewProfile() {
     const pagePromise = this.context.waitForEvent('page');

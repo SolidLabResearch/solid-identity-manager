@@ -169,6 +169,7 @@ Perhaps with additional research, a workaround can be conceptualized that does n
 To run end-to-end tests, you must first have built the extension (`npm run build`).
 Then the Playwright tests can be run with `npx playwright test` for headless mode.
 If you want to run the tests interactively, you can use `npx playwright test --ui`.
+To mock the network requests from the service worker an environment variable must be set: PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1.
 
 ## License
 

@@ -68,8 +68,6 @@ const broadcast = (message) => {
 /**
  * Queries for an IDP for a given WebID.
  * We use the IDPs generally for redirecting the user to the login/authorization flow of their IDP.
- * TODO: If your WebID does not exist or the IDP cannot be determined, this will fail with an error and no fallback.
- * See https://github.com/KNowledgeOnWebScale/solid-authentication-browser-extension/issues/48.
  * @param {string} webId - The WebID.
  * @returns {Promise<string[]>} - The IDPs.
  */
@@ -111,10 +109,20 @@ const handleInternalMessage = async (message) => {
 
     let idpOrWebID = activeIdentity.idp;
     if (activeIdentity.webID) {
-      const idps = await getIDPsFromWebID(activeIdentity.webID);
-      // In the end we set the IDP anyway. User gets redirected to IDP. If it supports more than one WebID, the user can confirm or select the correct one there.
-      if (idps.length) {
-        idpOrWebID = idps[0];
+      try {
+        const idps = await getIDPsFromWebID(activeIdentity.webID);
+        // In the end we set the IDP anyway. User gets redirected to IDP. If it supports more than one WebID, the user can confirm or select the correct one there.
+        if (idps.length) {
+          idpOrWebID = idps[0];
+        }
+      }
+      catch (e) {
+        broadcast({
+          type: 'active-identity-response-error',
+          data: e.message,
+        });
+        console.log(e);
+        return;
       }
     }
     activeIdentity.idpOrWebID = idpOrWebID;

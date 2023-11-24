@@ -17,6 +17,22 @@ const main = () => {
   document.getElementById('settings-button').addEventListener('click', () => {
     openSettings();
   });
+
+  document.getElementById('close-error-button').addEventListener('click', () => {
+    document.getElementById('error-message-container').classList.add('hidden');
+  });
+};
+
+/**
+ * Displays the error message container and sets the message text.
+ * @param {string} message - The message to display.
+ */
+const handleError = (message) => {
+  const container = document.getElementById('error-message-container');
+  container.classList.remove('hidden');
+
+  const paragraph = document.getElementById('error-message-text');
+  paragraph.innerText = message;
 };
 
 const handleInternalMessage = (message) => {
@@ -29,6 +45,10 @@ const handleInternalMessage = (message) => {
     setActiveIdentity(message.data);
 
     return;
+  }
+
+  if (message.type === 'active-identity-response-error') {
+    handleError('Unable to retrieve IDP from WebID.');
   }
 
   if (message.type === 'all-identities-response') {
