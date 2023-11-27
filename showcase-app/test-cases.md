@@ -81,3 +81,11 @@ This document provides an overview of the end-to-end tests for the plugin.
   - Verify the login form is displayed.
   - Verify that the active profile is still displayed
 
+### 10. Reloading the app restores the active profile
+
+- **Description**: Tests if a hard reload of the app restores the active profile.
+- **Test Steps**:
+  - Setup a profile with an active session.
+  - Reload the page.
+  - Verify that the active profile is still displayed
+
