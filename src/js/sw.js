@@ -55,7 +55,9 @@ async function main() {
 
 /**
  * Posts a message to all connected apps (tabs) and internal windows/popups.
- * @param {string} message - The message to broadcast.
+ * @param {object} message - The message to broadcast.
+ * @param {string} message.type - The message type.
+ * @param {*} message.data - The message type.
  */
 const broadcast = (message) => {
   internalPort.postMessage(message);
@@ -111,7 +113,6 @@ const handleInternalMessage = async (message) => {
     if (activeIdentity.webID) {
       try {
         const idps = await getIDPsFromWebID(activeIdentity.webID);
-        // In the end we set the IDP anyway. User gets redirected to IDP. If it supports more than one WebID, the user can confirm or select the correct one there.
         if (idps.length) {
           idpOrWebID = idps[0];
         }
@@ -119,7 +120,11 @@ const handleInternalMessage = async (message) => {
       catch (e) {
         broadcast({
           type: 'active-identity-response-error',
-          data: e.message,
+          data: {
+            identityId: activeIdentity.id,
+            displayName: activeIdentity.displayName,
+            message: e.message
+          },
         });
         console.log(e);
         return;

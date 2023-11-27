@@ -11,6 +11,7 @@ const main = () => {
   document
     .getElementById('add-identity-button')
     .addEventListener('click', () => {
+      clearError();
       createNewIdentity();
     });
 
@@ -35,6 +36,17 @@ const handleError = (message) => {
   paragraph.innerText = message;
 };
 
+/**
+ * Clears the error message and hides its container.
+ */
+const clearError = () => {
+  const container = document.getElementById('error-message-container');
+  container.classList.add('hidden');
+
+  const paragraph = document.getElementById('error-message-text');
+  paragraph.innerHTML = '';
+};
+
 const handleInternalMessage = (message) => {
   if (!message.type) {
     console.error('Non-conformal message detected, omitting...');
@@ -48,7 +60,8 @@ const handleInternalMessage = (message) => {
   }
 
   if (message.type === 'active-identity-response-error') {
-    handleError('Unable to retrieve IDP from WebID.');
+    const { data: {displayName} } = message;
+    handleError(`Unable to retrieve IDP from WebID for ${displayName}.`);
   }
 
   if (message.type === 'all-identities-response') {
@@ -120,6 +133,7 @@ const createIdentityRow = (identity) => {
   button.appendChild(displayName);
 
   button.addEventListener('click', () => {
+    clearError();
     internalPort.postMessage({
       type: 'set-active-identity',
       data: identity,
