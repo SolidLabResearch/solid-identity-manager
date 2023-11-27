@@ -1,5 +1,21 @@
 import {test, expect} from './fixtures';
 
+const WEBID_ENDPOINT = 'https://example.com/PROFILEA/profile/card#me';
+
+const WEBID_RESPONSE = `"@prefix foaf: <http://xmlns.com/foaf/0.1/>.\n" +
+  "@prefix solid: <http://www.w3.org/ns/solid/terms#>.\n" +
+  "\n" +
+  "<>\n" +
+  "    a foaf:PersonalProfileDocument;\n" +
+  "    foaf:maker <${WEBID_ENDPOINT}>;\n" +
+  "    foaf:primaryTopic <${WEBID_ENDPOINT}>.\n" +
+  "\n" +
+  "<${WEBID_ENDPOINT}>\n" +
+  "    \n" +
+  "    solid:oidcIssuer <https://example.com/>;\n" +
+  "    a foaf:Person.\n"
+`;
+
 test('popup page has title', async ({page, popupPage}) => {
   await popupPage.openPopup();
   await expect(page).toHaveTitle(/Solid Identity Selector/);
@@ -415,4 +431,107 @@ test('edits of WebID are persisted', async ({ popupPage }) => {
   })).click();
 
   await expect(webid).toHaveValue('NEW WEBID');
+});
+
+test('popup starts with the error section hidden', async ({ page }) => {
+  await expect(page.locator('#error-message-container')).toBeHidden();
+});
+
+test('shows no error message when able to retrieve IDP from WebID', async ({ popupPage, page, context }) => {
+  await context.route(WEBID_ENDPOINT, async route => {
+    await route.fulfill({ contentType: 'application/trig', body: WEBID_RESPONSE });
+  });
+
+  await popupPage.createProfile('A Profile', null, WEBID_ENDPOINT);
+
+  const identities = page.locator('section#identities');
+
+  await identities.getByRole('button', {
+    name: 'A Profile',
+  }).click();
+
+  await expect(page.locator('#error-message-container')).toBeHidden();
+});
+
+test('shows error message when unable to retrieve IDP from WebID', async ({ popupPage, page, context }) => {
+  await context.route(WEBID_ENDPOINT, async route => {
+    await route.abort('failed');
+  });
+
+  const PROFILE_NAME = 'A Profile';
+  await popupPage.createProfile(PROFILE_NAME, null, WEBID_ENDPOINT);
+
+  const identities = page.locator('section#identities');
+
+  await identities.getByRole('button', {
+    name: PROFILE_NAME,
+  }).click();
+
+  await expect(page.locator('#error-message-container')).toBeVisible();
+  await expect(page.locator('#error-message-container')).toHaveText(`Unable to retrieve IDP from WebID for ${PROFILE_NAME}.`);
+});
+
+test('error message disappears when clicking the close icon button', async ({ popupPage, page, context }) => {
+  await context.route(WEBID_ENDPOINT, async route => {
+    await route.abort('failed');
+  });
+
+  await popupPage.createProfile('A Profile', null, WEBID_ENDPOINT);
+
+  const identities = page.locator('section#identities');
+
+  await identities.getByRole('button', {
+    name: 'A Profile',
+  }).click();
+
+  await expect(page.locator('#error-message-container')).toBeVisible();
+
+  await page.getByLabel('close').click();
+
+  await expect(page.locator('#error-message-container')).toBeHidden();
+});
+
+test('error message disappears when clicking a valid profile', async ({ popupPage, page, context }) => {
+  await context.route(WEBID_ENDPOINT, async route => {
+    await route.abort('failed');
+  });
+
+  await popupPage.createProfile('A Profile', null, WEBID_ENDPOINT);
+  await popupPage.createProfile('B Profile', 'IDP Profile', null);
+
+  const identities = page.locator('section#identities');
+
+  await identities.getByRole('button', {
+    name: 'A Profile',
+  }).click();
+
+  await expect(page.locator('#error-message-container')).toBeVisible();
+
+  await identities.getByRole('button', {
+    name: 'B Profile',
+  }).click();
+
+  await expect(page.locator('#error-message-container')).toBeHidden();
+});
+
+test('error message disappears when clicking the add profile button', async ({ popupPage, page, context }) => {
+  await context.route(WEBID_ENDPOINT, async route => {
+    await route.abort('failed');
+  });
+
+  await popupPage.createProfile('A Profile', null, WEBID_ENDPOINT);
+
+  const identities = page.locator('section#identities');
+
+  await identities.getByRole('button', {
+    name: 'A Profile',
+  }).click();
+
+  await expect(page.locator('#error-message-container')).toBeVisible();
+
+  await identities.getByRole('button', {
+    name: 'Add',
+  }).click();
+
+  await expect(page.locator('#error-message-container')).toBeHidden();
 });

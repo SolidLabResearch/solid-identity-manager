@@ -167,8 +167,8 @@ Perhaps with additional research, a workaround can be conceptualized that does n
 ### End-to-end testing
 
 To run end-to-end tests, you must first have built the extension (`npm run build`).
-Then the Playwright tests can be run with `npx playwright test` for headless mode.
-If you want to run the tests interactively, you can use `npx playwright test --ui`.
+Then you run the tests via `npm test`.
+If you want to run the tests interactively, you use `npm run test:ui`.
 
 ## License
 

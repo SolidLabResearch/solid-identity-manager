@@ -83,6 +83,39 @@ section#identities {
   }
 }
 
+.hidden {
+  display: none;
+}
+
+#error-message {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 18px;
+  color: #E77975;
+  background-color: #FCF2F2;
+  gap: 8px;
+}
+#error-message svg {
+  fill: #E77975;
+  height: 22px;
+  width: 22px;
+  flex-shrink: 0;
+}
+#close-error-button {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+#close-error-button svg {
+  height: 16px;
+  width: 16px;
+}
+#error-message p {
+  flex-grow: 1;
+}
 .identity-row svg {
   margin: auto 0;
   width: 20px;
@@ -91,8 +124,9 @@ section#identities {
 #settings-button {
   background-color: transparent;
   transition: background-color 0.2s ease-in-out;
-  &:hover {
-    background-color: #eee;
-  }
+}
+
+.control:hover {
+  background-color: #eee;
 }
 

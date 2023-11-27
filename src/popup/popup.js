@@ -11,12 +11,40 @@ const main = () => {
   document
     .getElementById('add-identity-button')
     .addEventListener('click', () => {
+      clearError();
       createNewIdentity();
     });
 
   document.getElementById('settings-button').addEventListener('click', () => {
     openSettings();
   });
+
+  document.getElementById('close-error-button').addEventListener('click', () => {
+    document.getElementById('error-message-container').classList.add('hidden');
+  });
+};
+
+/**
+ * Displays the error message container and sets the message text.
+ * @param {string} message - The message to display.
+ */
+const handleError = (message) => {
+  const container = document.getElementById('error-message-container');
+  container.classList.remove('hidden');
+
+  const paragraph = document.getElementById('error-message-text');
+  paragraph.innerText = message;
+};
+
+/**
+ * Clears the error message and hides its container.
+ */
+const clearError = () => {
+  const container = document.getElementById('error-message-container');
+  container.classList.add('hidden');
+
+  const paragraph = document.getElementById('error-message-text');
+  paragraph.innerHTML = '';
 };
 
 const handleInternalMessage = (message) => {
@@ -29,6 +57,11 @@ const handleInternalMessage = (message) => {
     setActiveIdentity(message.data);
 
     return;
+  }
+
+  if (message.type === 'active-identity-response-error') {
+    const { data: {displayName} } = message;
+    handleError(`Unable to retrieve IDP from WebID for ${displayName}.`);
   }
 
   if (message.type === 'all-identities-response') {
@@ -100,6 +133,7 @@ const createIdentityRow = (identity) => {
   button.appendChild(displayName);
 
   button.addEventListener('click', () => {
+    clearError();
     internalPort.postMessage({
       type: 'set-active-identity',
       data: identity,
@@ -115,8 +149,6 @@ const setActiveIdentity = (identity) => {
   activeIdentity = identity;
   document.getElementById('no-identities-prompt').classList.add('hidden');
   document.getElementById('identity-short').innerHTML = identity.displayName;
-
-  console.log(identity);
 
   if (identity.metadata?.name) {
     document.getElementById('full-name').innerHTML = identity.metadata.name;
