@@ -2,7 +2,8 @@
  * Specifics & Overrides
  */
 body {
-  width: 250px;
+  width: 300px;
+  min-height: 600px;
   margin: 0;
   user-select: none;
 }
