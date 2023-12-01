@@ -2,6 +2,94 @@ let availableIdentities = [];
 let internalPort;
 let activeIdentity;
 
+const addProfileScreen = {
+  displayName: document.querySelector('#add-profile-dialog input[name=displayname]'),
+  idp: document.querySelector('#add-profile-dialog input[name=idp]'),
+  webID: document.querySelector('#add-profile-dialog input[name=webid]'),
+  colors: document.querySelectorAll('#add-profile-dialog input[name=color]'),
+  form: document.querySelector('#add-profile-dialog form'),
+  close: document.querySelector('#add-profile-dialog .close-button'),
+  avatar: document.querySelector('#add-profile-dialog .avatar'),
+  dialog: document.querySelector('#add-profile-dialog')
+};
+
+const initAddProfileScreen = () => {
+  const ipdError = document.querySelector('#idp_error');
+  const webidError = document.querySelector('#webid_error');
+  const displayNameError = document.querySelector('#displayname_error');
+
+  const { displayName, idp, webID, form, close, dialog, colors, avatar } = addProfileScreen;
+  displayName.addEventListener('input', (e) => {
+    if (e.target.value.trim().length > 0) {
+      displayName.classList.remove('error');
+      avatar.innerHTML = e.target.value.trim().charAt(0).toUpperCase();
+    }
+  });
+  for (const input of [idp, webID]) {
+    input.addEventListener('input', (e) => {
+      if (e.target.value.trim().length > 0) {
+        idp.classList.remove('error');
+        ipdError.textContent = '';
+        webID.classList.remove('error');
+        webidError.textContent = '';
+      }
+    });
+  }
+
+  const inputListener = e => [idp, webID].filter(input => input !== e.target).forEach(input => {
+    input.required = !e.target.value.trim().length;
+    input.disabled = !!e.target.value.trim().length;
+  });
+  [idp, webID].forEach(i => i.addEventListener('input', inputListener));
+
+  colors.forEach(
+    (input) => input.addEventListener('change', () => document.querySelector('#avatar').style.backgroundColor = input.value)
+  );
+
+  close.addEventListener('click', () => {
+    dialog.close();
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const form = e.target;
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    let isValid = true;
+    if (displayName.value.trim().length === 0) {
+      displayName.classList.add('error');
+      displayNameError.textContent = 'You must provide a display name';
+      isValid = false;
+    }
+    if (webID.value.trim().length === 0 && idp.value.trim().length === 0) {
+      webID.classList.add('error');
+      idp.classList.add('error');
+      ipdError.textContent = 'Please provide either an Identity Provider or WebID';
+      webidError.textContent = 'Please provide either an Identity Provider or WebID';
+      isValid = false;
+    }
+    if (isValid) {
+      const profile = {
+        color: { id: data.color, color: 'white', background: data.color },
+        displayName: data.displayname,
+        idp: data.idp || '',
+        webID: data.webid || '',
+      }
+      internalPort.postMessage({
+        type: 'create-profile',
+        data: profile,
+      });
+      // internalPort.postMessage({ type: 'request-identities' });
+      const list = document.getElementById('identity-list');
+      const identityRow = createIdentityRow(profile);
+      list.appendChild(identityRow);
+
+      dialog.close();
+    }
+  });
+};
+
 const main = () => {
   internalPort = chrome.runtime.connect({ name: 'popup' });
   internalPort.onMessage.addListener(handleInternalMessage);
@@ -12,7 +100,10 @@ const main = () => {
     .getElementById('add-identity-button')
     .addEventListener('click', () => {
       clearError();
-      createNewIdentity();
+      addProfileScreen.avatar.innerHTML = '?';
+      addProfileScreen.avatar.style.background = addProfileScreen.colors[0].value;
+      addProfileScreen.form.reset();
+      addProfileScreen.dialog.showModal();
     });
 
   document.getElementById('settings-button').addEventListener('click', () => {
@@ -22,6 +113,8 @@ const main = () => {
   document.getElementById('close-error-button').addEventListener('click', () => {
     document.getElementById('error-message-container').classList.add('hidden');
   });
+
+  initAddProfileScreen();
 };
 
 /**
@@ -67,7 +160,9 @@ const handleInternalMessage = (message) => {
   if (message.type === 'all-identities-response') {
     availableIdentities = message.data;
     const list = document.getElementById('identity-list');
-
+    while (list.firstChild) {
+      list.removeChild(list.firstChild);
+    }
     availableIdentities.forEach((identity) => {
       const identityRow = createIdentityRow(identity);
       list.appendChild(identityRow);
@@ -89,13 +184,6 @@ const handleInternalMessage = (message) => {
 const openSettings = () => {
   createCenteredPopup(720, 720, {
     url: chrome.runtime.getURL('settings.html'),
-    type: 'popup',
-  });
-};
-
-const createNewIdentity = () => {
-  createCenteredPopup(420, 640, {
-    url: chrome.runtime.getURL('identity-creation.html'),
     type: 'popup',
   });
 };

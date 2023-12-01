@@ -66,6 +66,52 @@
             Add
         </button>
     </section>
+
+    <dialog id="add-profile-dialog" _open>
+        <div class="container">
+        <h1>Add new profile</h1>
+        <form novalidate>
+            <button class="close-button" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="avatar-container">
+                <span id="avatar" class="avatar">?</span>
+            </div>
+
+            <fieldset id="color-selection" class="color-selection">
+                <label><input type="radio" name="color" value="purple" checked/></label>
+                <label><input type="radio" name="color" value="orange" /></label>
+                <label><input type="radio" name="color" value="green" /></label>
+                <label><input type="radio" name="color" value="blue" /></label>
+                <label><input type="radio" name="color" value="red" /></label>
+            </fieldset>
+
+            <fieldset>
+                <label for="displayname">Display name</label>
+                <input name="displayname" id="displayname" type="text" placeholder="The name in the list" required />
+                <p id="displayname_error" class="error-explanation"></p>
+            </fieldset>
+
+            <fieldset>
+                <label for="idp">IDP</label>
+                <input id="idp" name="idp" type="text" placeholder="Solid identity provider" />
+                <p id="idp_error" class="error-explanation"></p>
+            </fieldset>
+
+            <fieldset>
+                <label for="webid">... or WebID</label>
+                <input id="webid" name="webid" type="text" placeholder="Your pod's WebID" />
+                <p id="webid_error" class="error-explanation"></p>
+            </fieldset>
+
+            <button class="primary">Create</button>
+        </form>
+        </div>
+    </dialog>
+
 </div>
 
 <script type="text/javascript" src="popup.js"></script>

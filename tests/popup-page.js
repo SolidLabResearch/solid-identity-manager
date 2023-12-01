@@ -13,7 +13,7 @@ export class PopupPage {
     this.context = context;
     this.page = page;
     this.extensionId = extensionId;
-    this.addButton = this.page.getByRole('button', { name: 'Add' });
+    this.addButton = this.page.getByRole('button', { name: /Add/ });
     this.settingsButton = this.page.locator('#settings-button');
   }
 
@@ -31,28 +31,22 @@ export class PopupPage {
    * @param {string} webId - The WebID.
    */
   async createProfile(profileName, idp, webId) {
-    await this.openPopup();
-    const pagePromise = this.context.waitForEvent('page');
-
     await this.addButton.click();
 
-    const popup = await pagePromise;
-    await popup.waitForLoadState();
-
-    await popup.locator('#display-name').fill(profileName);
+    await this.page.locator('input[name="displayname"]').fill(profileName);
     if (idp) {
-      await popup.locator('#idp').fill(idp);
+      await this.page.locator('input[name="idp"]').fill(idp);
     }
     else if (webId) {
-      await popup.locator('#webid').fill(webId);
+      await this.page.locator('input[name="webid"]').fill(webId);
     }
 
-    await popup.waitForTimeout(1000);
-    await popup.getByRole('button', { name: 'Create' }).click();
+    // await popup.waitForTimeout(1000);
+    await this.page.getByRole('button', { name: 'Create' }).click();
 
-    await this.page.goto(`chrome-extension://${this.extensionId}/popup.html`);
-    await this.page.waitForTimeout(1000);
-    await this.page.reload();
+    // await this.page.goto(`chrome-extension://${this.extensionId}/popup.html`);
+    // await this.page.waitForTimeout(1000);
+    // await this.page.reload();
   }
 
   /**
@@ -70,16 +64,35 @@ export class PopupPage {
   }
 
   /**
-   * Opens the create profile page by clicking on the add button on the popup page.
-   * @returns {Promise<*>} Returns a promise of the popup page.
+   * Opens the create profile dialog by clicking on the add button on the popup page.
    */
   async openNewProfile() {
-    const pagePromise = this.context.waitForEvent('page');
-
     await this.addButton.click();
-
-    const popup = await pagePromise;
-    await popup.waitForLoadState();
-    return popup;
   }
+
+  /**
+   * Returns the identies list
+   */
+  getIdentities() {
+    return this.page.locator('#identity-list');
+  }
+
+  /**
+   * Returns the identity-short element
+   */
+  getIdentityShort() {
+    return this.page.locator('#identity-short');
+  }
+
+  /**
+   * Selects a profile with the given display name
+   * @param {string} name - The profile name.
+   */
+  async selectProfile(name) {
+    await this.page.locator('#identity-list').getByRole('button', {
+      name: 'A Profile',
+    }).click()
+  }
+
+
 }

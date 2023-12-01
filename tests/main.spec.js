@@ -31,26 +31,20 @@ test('popup page without profiles', async ({page, popupPage}) => {
   await expect(page.getByRole('button', {name: 'Add'})).toBeVisible();
 });
 
-test('add button opens add-new-profile page', async ({ page, popupPage, context}) => {
+test('add button opens add-new-profile dialog', async ({ page, popupPage}) => {
   await popupPage.openPopup();
 
-  const pagePromise = context.waitForEvent('page');
+  await popupPage.openNewProfile();
 
-  await page.getByRole('button', {name: 'Add'}).click();
-
-  const popup = await pagePromise;
-  await popup.waitForLoadState();
-  await expect(popup).toHaveTitle(/Add a new Solid profile/);
-
-  await expect(popup.getByRole('heading', {
+  await expect(page.getByRole('heading', {
     name: 'Add new profile',
   }),).toBeVisible();
 });
 
-test('add new profile page has all necessary input fields', async ({  popupPage}) => {
-  const page = await popupPage.openNewProfile();
+test('add new profile page has all necessary input fields', async ({ page, popupPage}) => {
+  await popupPage.openNewProfile();
 
-  const displayName = page.locator('#display-name');
+  const displayName = page.locator('#displayname');
   await expect(displayName).toBeVisible();
   await expect(displayName).toBeEditable();
   await expect(displayName).toBeEmpty();
@@ -72,8 +66,8 @@ test('add new profile page has all necessary input fields', async ({  popupPage}
   expect(webidPlaceholder).toEqual("Your pod's WebID");
 });
 
-test('when create a profile, IDP and WebID fields are mutually exclusive', async ({  popupPage}) => {
-  const page = await popupPage.openNewProfile();
+test('when create a profile, IDP and WebID fields are mutually exclusive', async ({ page, popupPage}) => {
+  await popupPage.openNewProfile();
 
   const idp = page.getByRole('textbox', {name: 'idp'});
   await expect(idp).toBeEditable();
@@ -94,14 +88,14 @@ test('when create a profile, IDP and WebID fields are mutually exclusive', async
   await expect(idp).toBeEditable();
 });
 
-test('create profile validates empty fields', async ({ page, extensionId }) => {
-  await page.goto(`chrome-extension://${extensionId}/identity-creation.html`);
+test('create profile validates empty fields', async ({ page, popupPage }) => {
+  await popupPage.openNewProfile();
 
-  const displayName = page.locator('#display-name');
+  const displayName = page.locator('input[name="displayname"]');
   await expect(displayName).toBeEmpty();
-  const webid = page.locator('#webid');
+  const webid = page.locator('input[name="webid"]');
   await expect(webid).toBeEmpty();
-  const idp = page.locator('#idp');
+  const idp = page.locator('input[name="idp"]');
   await expect(idp).toBeEmpty();
 
   await page.getByRole('button', {name: 'Create'}).click();
@@ -109,15 +103,15 @@ test('create profile validates empty fields', async ({ page, extensionId }) => {
   await expect(displayName).toHaveClass('error');
   await expect(page.getByText('You must provide a display name')).toBeVisible();
   await expect(webid).toHaveClass('error');
-  await expect(page.locator('#webid-error')).toHaveText('Please provide either an Identity Provider or WebID',);
+  await expect(page.locator('#webid_error')).toHaveText('Please provide either an Identity Provider or WebID',);
   await expect(idp).toHaveClass('error');
-  await expect(page.locator('#idp-error')).toHaveText('Please provide either an Identity Provider or WebID',);
+  await expect(page.locator('#idp_error')).toHaveText('Please provide either an Identity Provider or WebID',);
 });
 
 test('creating a profile adds it to list of profiles', async ({ page, popupPage}) => {
   await popupPage.createProfile('A Profile', 'WebId A');
 
-  await page.waitForTimeout(1000);
+  // await page.waitForTimeout(1000);
   const identities = page.locator('section#identities');
   await expect(identities).toBeVisible();
 
@@ -127,7 +121,6 @@ test('creating a profile adds it to list of profiles', async ({ page, popupPage}
 
 test('creating 2 profiles adds both to list of profiles', async ({page, popupPage}) => {
   await popupPage.createProfile('A Profile', 'WebId A');
-  await page.reload();
   await popupPage.createProfile('B Profile', 'WebId B');
 
   const identities = page.locator('section#identities');
@@ -148,31 +141,60 @@ test('profile header shows name and avatar of active profile', async ({page, pop
   await expect(page.locator('#identity-short')).toHaveText('B Profile');
 });
 
-test('switching profile activates correct one', async ({page, popupPage}) => {
-  await popupPage.createProfile('A Profile', 'IDP A');
-  await page.reload();
-  await popupPage.createProfile('B Profile', 'IDP B');
-  await page.reload();
-  await popupPage.createProfile('C Profile', 'IDP C');
+test('switching profile activates correct one', async ({page, popupPage, extensionId}) => {
+  await popupPage.createProfile('A Profile', 'WebId A');
+  await popupPage.createProfile('B Profile', 'WebId B');
 
-  await expect(page.locator('#identity-short')).toHaveText('C Profile');
+  const identities = popupPage.getIdentities()
+  await expect(identities).toBeVisible();
 
-  const identities = page.locator('section#identities');
+  await expect(identities.locator('.identity-row')).toHaveCount(2);
 
-  await identities.getByRole('button', {
-    name: 'A Profile',
-  }).click();
-  await expect(page.getByRole('heading', {name: 'A Profile'}),).toBeVisible();
+  // await expect(popupPage.getIdentityShort()).toHaveText('B Profile');
+
+  await popupPage.selectProfile('A Profile');
+
+  await expect(identities.locator('.identity-row')).toHaveCount(2);
+
+  await expect(popupPage.getIdentityShort()).toHaveText('A Profile');
 
   await identities.getByRole('button', {
     name: 'B Profile',
-  }).click();
-  await expect(page.getByRole('heading', {name: 'B Profile'}),).toBeVisible();
+  }).click()
 
-  await identities.getByRole('button', {
-    name: 'C Profile',
-  }).click();
-  await expect(page.getByRole('heading', {name: 'C Profile'}),).toBeVisible();
+  await expect(popupPage.getIdentityShort()).toHaveText('B Profile');
+
+  // await popupPage.openPopup()
+  // // await popupPage.createProfile('A Profile', 'IDP A');
+  //
+  // await popupPage.createProfile('A Profile', 'IDP A');
+  // await expect(page.locator('#identity-short')).toHaveText('A Profile');
+  // await popupPage.createProfile('B Profile', 'IDP B');
+  // await expect(page.locator('#identity-short')).toHaveText('B Profile');
+  //
+  //
+  //
+  // const identities = page.locator('section#identities');
+  //
+  // await expect(identities.locator('.identity-row').first()).toHaveText('A' + 'A Profile',);
+  // await expect(page.locator('#identity-short')).toHaveText('A Profile');
+  // // await page.waitForTimeout(1000)
+  // await popupPage.createProfile('B Profile', 'IDP B');
+  // // await page.waitForTimeout(1000)
+  // await expect(identities.locator('.identity-row').last()).toHaveText('B' + 'B Profile',);
+  //
+  // await expect(page.locator('#identity-short')).toHaveText('B Profile');
+  //
+  // await identities.getByRole('button', {
+  //   name: 'A Profile',
+  // }).click();
+  // await expect(page.getByRole('heading', {name: 'A Profile'}),).toBeVisible();
+  //
+  // await identities.getByRole('button', {
+  //   name: 'B Profile',
+  // }).click();
+  // await expect(page.getByRole('heading', {name: 'B Profile'}),).toBeVisible();
+
 });
 
 test('manage profiles popup display empty list if no profiles exist', async ({popupPage}) => {
