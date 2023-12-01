@@ -15,7 +15,7 @@ This document provides an overview of the end-to-end tests for the plugin.
 
 ### 2. Page shows error message when extension is not available
 
-- **Description**: Tests if an error message is displayed when no connection can be made to the Solid Identity Extension.
+- **Description**:Tests if the app displays an error message when it cannot make a connection to the Solid Identity Extension.
 - **Test Steps**:
   - Assert the extension is not available. 
   - Open the main page.
