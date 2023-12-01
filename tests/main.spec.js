@@ -142,6 +142,8 @@ test('profile header shows name and avatar of active profile', async ({page, pop
 });
 
 test('switching profile activates correct one', async ({page, popupPage, extensionId}) => {
+  await expect(page.locator("#no-identities-prompt")).toBeVisible();
+
   await popupPage.createProfile('A Profile', 'WebId A');
   await popupPage.createProfile('B Profile', 'WebId B');
 
@@ -150,50 +152,19 @@ test('switching profile activates correct one', async ({page, popupPage, extensi
 
   await expect(identities.locator('.identity-row')).toHaveCount(2);
 
-  // await expect(popupPage.getIdentityShort()).toHaveText('B Profile');
-
   await popupPage.selectProfile('A Profile');
 
   await expect(identities.locator('.identity-row')).toHaveCount(2);
 
   await expect(popupPage.getIdentityShort()).toHaveText('A Profile');
+  await expect(page.getByRole('heading', {name: 'A Profile'}),).toBeVisible();
 
   await identities.getByRole('button', {
     name: 'B Profile',
   }).click()
 
   await expect(popupPage.getIdentityShort()).toHaveText('B Profile');
-
-  // await popupPage.openPopup()
-  // // await popupPage.createProfile('A Profile', 'IDP A');
-  //
-  // await popupPage.createProfile('A Profile', 'IDP A');
-  // await expect(page.locator('#identity-short')).toHaveText('A Profile');
-  // await popupPage.createProfile('B Profile', 'IDP B');
-  // await expect(page.locator('#identity-short')).toHaveText('B Profile');
-  //
-  //
-  //
-  // const identities = page.locator('section#identities');
-  //
-  // await expect(identities.locator('.identity-row').first()).toHaveText('A' + 'A Profile',);
-  // await expect(page.locator('#identity-short')).toHaveText('A Profile');
-  // // await page.waitForTimeout(1000)
-  // await popupPage.createProfile('B Profile', 'IDP B');
-  // // await page.waitForTimeout(1000)
-  // await expect(identities.locator('.identity-row').last()).toHaveText('B' + 'B Profile',);
-  //
-  // await expect(page.locator('#identity-short')).toHaveText('B Profile');
-  //
-  // await identities.getByRole('button', {
-  //   name: 'A Profile',
-  // }).click();
-  // await expect(page.getByRole('heading', {name: 'A Profile'}),).toBeVisible();
-  //
-  // await identities.getByRole('button', {
-  //   name: 'B Profile',
-  // }).click();
-  // await expect(page.getByRole('heading', {name: 'B Profile'}),).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'B Profile'}),).toBeVisible();
 
 });
 

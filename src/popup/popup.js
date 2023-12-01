@@ -163,6 +163,10 @@ const handleInternalMessage = (message) => {
     while (list.firstChild) {
       list.removeChild(list.firstChild);
     }
+    if (availableIdentities.length === 0) {
+      document.getElementById('no-identities-prompt').classList.remove('hidden');
+    }
+
     availableIdentities.forEach((identity) => {
       const identityRow = createIdentityRow(identity);
       list.appendChild(identityRow);
