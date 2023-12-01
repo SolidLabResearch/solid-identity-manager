@@ -41,12 +41,7 @@ export class PopupPage {
       await this.page.locator('input[name="webid"]').fill(webId);
     }
 
-    // await popup.waitForTimeout(1000);
     await this.page.getByRole('button', { name: 'Create' }).click();
-
-    // await this.page.goto(`chrome-extension://${this.extensionId}/popup.html`);
-    // await this.page.waitForTimeout(1000);
-    // await this.page.reload();
   }
 
   /**
