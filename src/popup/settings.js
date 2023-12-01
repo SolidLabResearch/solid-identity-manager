@@ -5,27 +5,27 @@ let selectedIdentity;
 const avatarColors = [
   {
     id: 'purple',
-    background: '#7b4dff',
+    background: 'purple',
     color: 'white',
   },
   {
     id: 'orange',
-    background: '#ff833b',
+    background: 'orange',
     color: 'white',
   },
   {
-    id: 'brown',
-    background: '#8e6231',
+    id: 'green',
+    background: 'green',
     color: 'white',
   },
   {
     id: 'blue',
-    background: '#283cf2',
+    background: 'blue',
     color: 'white',
   },
   {
     id: 'red',
-    background: '#e93a2a',
+    background: 'red',
     color: 'white',
   },
 ];

@@ -75,12 +75,11 @@ const initAddProfileScreen = () => {
         displayName: data.displayname,
         idp: data.idp || '',
         webID: data.webid || '',
-      }
+      };
       internalPort.postMessage({
         type: 'create-profile',
         data: profile,
       });
-      // internalPort.postMessage({ type: 'request-identities' });
       const list = document.getElementById('identity-list');
       const identityRow = createIdentityRow(profile);
       list.appendChild(identityRow);
@@ -103,6 +102,8 @@ const main = () => {
       addProfileScreen.avatar.innerHTML = '?';
       addProfileScreen.avatar.style.background = addProfileScreen.colors[0].value;
       addProfileScreen.form.reset();
+      addProfileScreen.idp.disabled = false;
+      addProfileScreen.webID.disabled = false;
       addProfileScreen.dialog.showModal();
     });
 

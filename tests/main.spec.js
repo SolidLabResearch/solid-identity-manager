@@ -141,13 +141,13 @@ test('profile header shows name and avatar of active profile', async ({page, pop
   await expect(page.locator('#identity-short')).toHaveText('B Profile');
 });
 
-test('switching profile activates correct one', async ({page, popupPage, extensionId}) => {
-  await expect(page.locator("#no-identities-prompt")).toBeVisible();
+test('switching profile activates correct one', async ({page, popupPage}) => {
+  await expect(page.locator('#no-identities-prompt')).toBeVisible();
 
   await popupPage.createProfile('A Profile', 'WebId A');
   await popupPage.createProfile('B Profile', 'WebId B');
 
-  const identities = popupPage.getIdentities()
+  const identities = popupPage.getIdentities();
   await expect(identities).toBeVisible();
 
   await expect(identities.locator('.identity-row')).toHaveCount(2);
@@ -161,7 +161,7 @@ test('switching profile activates correct one', async ({page, popupPage, extensi
 
   await identities.getByRole('button', {
     name: 'B Profile',
-  }).click()
+  }).click();
 
   await expect(popupPage.getIdentityShort()).toHaveText('B Profile');
   await expect(page.getByRole('heading', {name: 'B Profile'}),).toBeVisible();
@@ -330,6 +330,7 @@ test('profile colors can be changed', async ({page, popupPage}) => {
   await lastColorButton.click();
 
   const newProfileColor = await avatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'));
+
   expect(newProfileColor).toEqual(lastColorOption);
 
   await settingsPage.getByRole('button', {
@@ -337,8 +338,8 @@ test('profile colors can be changed', async ({page, popupPage}) => {
   }).click();
 
   const settingsAvatar = settingsPage.locator('.identity-box .avatar');
-  const settingsAvatarColor = await settingsAvatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'));
-  expect(settingsAvatarColor).toEqual(lastColorOption);
+  await page.waitForTimeout(200);
+  await expect(settingsAvatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'))).toEqual(lastColorOption);
 
   await page.reload();
 
@@ -485,6 +486,7 @@ test('error message disappears when clicking the close icon button', async ({ po
 });
 
 test('error message disappears when clicking a valid profile', async ({ popupPage, page, context }) => {
+  await expect(page.locator('#no-identities-prompt')).toBeVisible();
   await context.route(WEBID_ENDPOINT, async route => {
     await route.abort('failed');
   });

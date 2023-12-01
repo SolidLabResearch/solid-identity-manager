@@ -71,28 +71,29 @@ export class PopupPage {
   }
 
   /**
-   * Returns the identies list
+   * Returns the identies list.
+   * @returns {Promise<*>} Returns a promise of the identities list.
    */
   getIdentities() {
     return this.page.locator('#identity-list');
   }
 
   /**
-   * Returns the identity-short element
+   * Returns the identity-short element.
+   * @returns {Promise<*>} Returns a promise of the identity-short element.
    */
   getIdentityShort() {
     return this.page.locator('#identity-short');
   }
 
   /**
-   * Selects a profile with the given display name
+   * Selects a profile with the given display name.
    * @param {string} name - The profile name.
    */
   async selectProfile(name) {
     await this.page.locator('#identity-list').getByRole('button', {
-      name: 'A Profile',
-    }).click()
+      name,
+    }).click();
   }
-
 
 }
