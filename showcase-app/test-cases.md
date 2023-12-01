@@ -4,7 +4,7 @@ This document provides an overview of the end-to-end tests for the plugin.
 
 ## Test Cases
 
-### 1. Page Has Title And Headlines
+### 1. Page has title and headlines
 
 - **Description**: Tests if the main page has the correct title and header.
 - **Test Steps**:
@@ -13,7 +13,7 @@ This document provides an overview of the end-to-end tests for the plugin.
   - Check if the page main headline matches "COOL SOLID APP".
   - Check if the page sub headline matches "Log in with your Solid Identity".
 
-### 2. Page Shows Error Message When Extension Is Not Available
+### 2. Page shows error message when extension is not available
 
 - **Description**: Tests if an error message is displayed when no connection can be made to the Solid Identity Extension.
 - **Test Steps**:
@@ -21,7 +21,7 @@ This document provides an overview of the end-to-end tests for the plugin.
   - Open the main page.
   - Verify that a message indicates that no connection can be made to the extension.
 
-### 3. Default State With No Active Profile
+### 3. Default state with no active profile
 
 - **Description**: Tests if the default state (no active profile) of the page is correct.
 - **Test Steps**:
@@ -29,14 +29,14 @@ This document provides an overview of the end-to-end tests for the plugin.
   - Assert the extension doesn't return an active profile.
   - Verify that the page does not show an active profile.
 
-### 4. Switching Profiles Activates the Correct Profile
+### 4. Switching profiles activates the correct profile
 
 - **Description**: Tests if switching between profiles correctly activates the correct profile in the app.
 - **Test Steps**:
   - Setup 3 profiles in the extension.
   - Switch between the profiles and verify that the correct profile is always activated on the main page.
 
-### 5. Removing Profile Inside the Extension Deactivates the Profile
+### 5. Removing profile inside the extension deactivates the profile
 
 - **Description**: Tests if logging out inside the extension deactivates the profile.
 - **Test Steps**:
