@@ -63,14 +63,14 @@ const initAddProfileScreen = () => {
     let isValid = true;
     if (displayName.value.trim().length === 0) {
       displayName.classList.add('error');
-      displayNameError.textContent = 'You must provide a display name';
+      displayNameError.textContent = 'You must provide a display name.';
       isValid = false;
     }
     if (webID.value.trim().length === 0 && idp.value.trim().length === 0) {
       webID.classList.add('error');
       idp.classList.add('error');
-      ipdError.textContent = 'Please provide either an Identity Provider or WebID';
-      webidError.textContent = 'Please provide either an Identity Provider or WebID';
+      ipdError.textContent = 'Please provide either an Identity Provider or WebID.';
+      webidError.textContent = 'Please provide either an Identity Provider or WebID.';
       isValid = false;
     }
     if (isValid) {
