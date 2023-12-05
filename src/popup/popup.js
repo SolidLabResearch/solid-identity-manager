@@ -13,6 +13,10 @@ const addProfileScreen = {
   dialog: document.querySelector('#add-profile-dialog')
 };
 
+/**
+ * Initializes the add profile screen.
+ * Binds event listeners to the input fields and to the form.
+ */
 const initAddProfileScreen = () => {
   const ipdError = document.querySelector('#idp_error');
   const webidError = document.querySelector('#webid_error');
