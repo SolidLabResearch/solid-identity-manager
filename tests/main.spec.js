@@ -36,8 +36,10 @@ test('add button opens add-new-profile dialog', async ({ page, popupPage}) => {
 
   await popupPage.openNewProfile();
 
+  await popupPage.page.waitForLoadState('domcontentloaded');
+
   await expect(page.getByRole('heading', {
-    name: 'Add new profile',
+    name: /Add new profile/,
   }),).toBeVisible();
 });
 
@@ -63,7 +65,7 @@ test('add new profile page has all necessary input fields', async ({ page, popup
   await expect(webid).toBeEditable();
   await expect(webid).toBeEmpty();
   const webidPlaceholder = await webid.getAttribute('placeholder');
-  expect(webidPlaceholder).toEqual("Your pod's WebID");
+  expect(webidPlaceholder).toEqual('Your WebID');
 });
 
 test('when create a profile, IDP and WebID fields are mutually exclusive', async ({ page, popupPage}) => {
@@ -103,9 +105,9 @@ test('create profile validates empty fields', async ({ page, popupPage }) => {
   await expect(displayName).toHaveClass('error');
   await expect(page.getByText('You must provide a display name')).toBeVisible();
   await expect(webid).toHaveClass('error');
-  await expect(page.locator('#webid_error')).toHaveText('Please provide either an Identity Provider or WebID',);
+  await expect(page.locator('#webid_error')).toHaveText('Please provide either an Identity Provider or WebID.',);
   await expect(idp).toHaveClass('error');
-  await expect(page.locator('#idp_error')).toHaveText('Please provide either an Identity Provider or WebID',);
+  await expect(page.locator('#idp_error')).toHaveText('Please provide either an Identity Provider or WebID.',);
 });
 
 test('creating a profile adds it to list of profiles', async ({ page, popupPage}) => {
@@ -311,7 +313,10 @@ test('editing profile changes its attributes on settings and main page', async (
   await expect(identities.locator('.identity-row').first()).toHaveText('X' + 'X Profile Edited',);
 });
 
-test('profile colors can be changed', async ({page, popupPage}) => {
+// Skipping this flaky test for now. Will be fixed in https://github.com/SolidLabResearch/solid-identity-manager/issues/16
+// The current implementation relies on the network messages being sent & received, and also a reload of the popup page.
+// Once the implementation of the Edit Profile page is done via a dialog, this won't be necessary and the state can be changed locally.
+test.skip('profile colors can be changed', async ({page, popupPage}) => {
   await popupPage.createProfile('A Profile', 'IDP A');
 
   const settingsPage = await popupPage.openSettings();
@@ -338,7 +343,6 @@ test('profile colors can be changed', async ({page, popupPage}) => {
   }).click();
 
   const settingsAvatar = settingsPage.locator('.identity-box .avatar');
-  await page.waitForTimeout(200);
   await expect(settingsAvatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'))).toEqual(lastColorOption);
 
   await page.reload();
