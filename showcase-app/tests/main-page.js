@@ -13,7 +13,7 @@ export class MainPage {
     this.page = page;
   }
 
-  async start() {
+  async loadPage() {
     await this.page.goto('http://localhost:5173');
   }
 
