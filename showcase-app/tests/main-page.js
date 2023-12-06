@@ -17,4 +17,8 @@ export class MainPage {
     await this.page.goto('http://localhost:5173');
   }
 
+  async reload() {
+    await this.page.reload()
+  }
+
 }
