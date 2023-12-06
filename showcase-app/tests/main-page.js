@@ -21,4 +21,12 @@ export class MainPage {
     await this.page.reload()
   }
 
+  async continueAs(profileName) {
+    await this.page.getByRole('button', { name: `Continue as ${profileName}` }).click()
+  }
+
+  getPage() {
+    return this.page;
+  }
+
 }

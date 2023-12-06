@@ -1,4 +1,19 @@
-import { test, expect } from './fixtures';
+import {test, expect, OPEN_ID_CONFIG_RESPONSE} from './fixtures';
+
+const WEBID_ENDPOINT = 'https://pod.playground.solidlab.be/serge1/profile/card#me';
+
+const WEBID_RESPONSE = `@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix solid: <http://www.w3.org/ns/solid/terms#>.
+
+<>
+    a foaf:PersonalProfileDocument;
+    foaf:maker <https://pod.playground.solidlab.be/serge1/profile/card#me>;
+    foaf:primaryTopic <https://pod.playground.solidlab.be/serge1/profile/card#me>.
+
+<https://pod.playground.solidlab.be/serge1/profile/card#me>
+    
+    solid:oidcIssuer <https://pod.playground.solidlab.be/>;
+    a foaf:Person.`;
 
 test('page has correct title', async ({page}) => {
   await page.goto('http://localhost:5173');
@@ -80,3 +95,30 @@ test('Removing profile inside the extension deactivates the profile', async ({pa
 
 });
 
+
+test('Clicking on the "Continue as " will redirect to login screen if active profile is not authenticated', async ({page, mainPage, popupPage, context}) => {
+  await context.route(WEBID_ENDPOINT, async route => {
+    await route.fulfill({ contentType: 'application/trig', body: WEBID_RESPONSE });
+  });
+  await context.route(`https://pod.playground.solidlab.be/.well-known/openid-configuration`, async route => {
+    await route.fulfill({ contentType: 'application/json', json: OPEN_ID_CONFIG_RESPONSE });
+  });
+  await context.route(`${OPEN_ID_CONFIG_RESPONSE.authorization_endpoint}?*`, async route => {
+    await route.fulfill({ contentType: 'text/html', body: "SUCCESS" });
+  });
+
+  await mainPage.loadPage();
+  await page.waitForTimeout(1000)
+
+  await popupPage.openPopup();
+  await popupPage.createProfile('Test Profile A', null, WEBID_ENDPOINT);
+  await popupPage.selectProfile('Test Profile A');
+
+  await page.waitForTimeout(1000)
+
+  await mainPage.continueAs('Test Profile A');
+
+  await page.waitForTimeout(1000)
+  await expect(await mainPage.getPage().content()).toContain('SUCCESS')
+
+})

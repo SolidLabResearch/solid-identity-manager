@@ -56,6 +56,15 @@ export class PopupPage {
   }
 
   /**
+   * Selects a profile in the extension.
+   * @param {string} profileName - The profile name.
+   */
+  async selectProfile(profileName) {
+    await this.openPopup();
+    await this.page.getByRole('button', { name: profileName }).click();
+  }
+
+  /**
    * Opens the settings page by clicking on the settings icon button on the popup page.
    * @returns {Promise<*>} Returns a promise of the settings page.
    */
