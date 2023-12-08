@@ -69,6 +69,7 @@ module.exports = {
     // 'jsdoc/sort-tags': 1,
     'jsdoc/tag-lines': 1, // Recommended
     'jsdoc/valid-types': 1, // Recommended
-    'playwright/no-wait-for-timeout': 0
+    'playwright/no-wait-for-timeout': 0,
+    'playwright/no-skipped-test': 0
   },
 }

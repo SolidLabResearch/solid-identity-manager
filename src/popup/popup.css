@@ -2,7 +2,8 @@
  * Specifics & Overrides
  */
 body {
-  width: 250px;
+  width: 300px;
+  min-height: 600px;
   margin: 0;
   user-select: none;
 }
@@ -78,6 +79,7 @@ section#identities {
   gap: 8px;
   justify-content: flex-start;
   padding: 8px 12px;
+
   &:hover {
     background-color: #00000011;
   }
@@ -98,24 +100,29 @@ section#identities {
   background-color: #FCF2F2;
   gap: 8px;
 }
+
 #error-message svg {
   fill: #E77975;
   height: 22px;
   width: 22px;
   flex-shrink: 0;
 }
+
 #close-error-button {
   background: transparent;
   border: none;
   padding: 0;
 }
+
 #close-error-button svg {
   height: 16px;
   width: 16px;
 }
+
 #error-message p {
   flex-grow: 1;
 }
+
 .identity-row svg {
   margin: auto 0;
   width: 20px;
@@ -130,3 +137,136 @@ section#identities {
   background-color: #eee;
 }
 
+dialog {
+  margin: 0;
+  max-width: 100%;
+  max-height: 100%;
+  background: white;
+
+  & button {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+  }
+
+  position: relative;
+
+  & .container {
+    padding: 20px;
+    width: 100%;
+  }
+}
+
+.close-button {
+  background: transparent;
+  padding: 3px;
+  border-radius: 8px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+
+  &:hover {
+    background-color: #00000008;
+  }
+
+  & svg {
+    width: 20px;
+    height: 20px;
+    stroke: grey;
+
+    &:hover {
+      stroke: black;
+      transition: stroke 0.2s ease-in-out;
+    }
+  }
+}
+
+#add-profile-dialog {
+  text-align: center;
+
+  & .avatar-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  & h1 {
+    font-size: 1.5rem;
+    margin-top: 20px;
+  }
+
+  & button.primary {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    border: none;
+
+    border-radius: 36px;
+    cursor: pointer;
+
+    font-weight: bold;
+    background-color: #7B4DFF;
+    color: white;
+  }
+}
+
+#color-selection {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+
+  & input[type=radio] {
+    display: none;
+  }
+
+  & input[type=radio]:checked + label span {
+    outline-offset: 2px;
+    outline: 2px solid #284be4;
+  }
+
+  & label {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+
+  & label::after {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 16px;
+    cursor: pointer;
+  }
+
+  & label:has(input[type=radio]:checked) {
+    outline-offset: 2px;
+    outline: 2px solid #284be4;
+    border-radius: 16px;
+  }
+
+  & label:has([value='red'])::after {
+    background: red;
+  }
+
+  & label:has([value='blue'])::after {
+    background: blue;
+  }
+
+  & label:has([value='green'])::after {
+    background: green;
+  }
+
+  & label:has([value='purple'])::after {
+    background: purple;
+  }
+
+  & label:has([value='orange'])::after {
+    background: orange;
+  }
+}
+
+input.error {
+  border: 2px solid red;
+}
