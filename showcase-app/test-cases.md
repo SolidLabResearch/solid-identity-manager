@@ -63,7 +63,7 @@ This document provides an overview of the end-to-end tests for the plugin.
   - Switch to the other profile.
   - Verify that the active session is invalidated.
 
-### 8. When an active profile is authenticated, the app display a message that the user is logged in
+### 8. When an active profile is authenticated, the app displays a message that the user is logged in
 
 - **Description**: Tests if the authenticated state is correctly displayed
 - **Test Steps**:
