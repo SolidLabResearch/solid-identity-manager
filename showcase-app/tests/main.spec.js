@@ -15,7 +15,6 @@ const WEBID_RESPONSE = `@prefix foaf: <http://xmlns.com/foaf/0.1/>.
     solid:oidcIssuer <https://pod.playground.solidlab.be/>;
     a foaf:Person.`;
 
-
 const authFile = 'user.json';
 
 test('authenticate', async ({ page }) => {
@@ -39,14 +38,14 @@ test('page has correct title', async ({page}) => {
   await expect(page).toHaveTitle(/Solid Auth Showcase/);
 });
 
-test('Default state with no active profile', async ({page, mainPage}) => {
+test('Default state with no active profile', async ({mainPage}) => {
   await mainPage.loadPage();
 
   await expect(mainPage.page.getByRole('button', {name: /Log in/})).toBeVisible();
   await expect(mainPage.page.getByRole('button', {name: /Continue as/})).toBeHidden();
 });
 
-test('Default state with an active profile', async ({page, mainPage, popupPage}) => {
+test('Default state with an active profile', async ({mainPage, popupPage}) => {
   await popupPage.openPopup();
   await popupPage.createProfile('Test Profile', 'Test IPD');
 
@@ -55,7 +54,7 @@ test('Default state with an active profile', async ({page, mainPage, popupPage})
   await expect(mainPage.getPage().getByRole('button', {name: /Continue as Test Profile/})).toBeVisible();
 });
 
-test('Switching extension profiles activates the correct profile in the app', async ({page, mainPage, popupPage}) => {
+test('Switching extension profiles activates the correct profile in the app', async ({mainPage, popupPage}) => {
   await popupPage.openPopup();
   await popupPage.createProfile('Test Profile A', 'Test IPD A');
 
@@ -114,7 +113,6 @@ test('Removing profile inside the extension deactivates the profile', async ({pa
     await expect(mainPage.getPage().getByRole('button', {name: /Continue as Test Profile A/})).toBeHidden();
   });
 
-
 });
 
 test('Clicking on the "Continue as " will redirect to login screen if active profile is not authenticated', async ({page, mainPage, popupPage, context}) => {
@@ -144,7 +142,7 @@ test('Clicking on the "Continue as " will redirect to login screen if active pro
 
 });
 
-test('When an active profile is authenticated, the app displays a message that the user is logged in', async ({page, mainPage, popupPage, context}) => {
+test('When an active profile is authenticated, the app displays a message that the user is logged in', async ({ mainPage, popupPage}) => {
   await mainPage.loadPage();
   await mainPage.register();
 
@@ -162,12 +160,12 @@ test('When an active profile is authenticated, the app displays a message that t
   // await page.context().storageState({ path: authFile });
 });
 
-test('Switching profiles will invalidate any active authentication session', async ({page, mainPage, popupPage, context}) => {
+test('Switching profiles will invalidate any active authentication session', async ({mainPage, popupPage}) => {
   await mainPage.loadPage();
   await mainPage.register();
 
   await popupPage.openPopup();
-  await popupPage.createProfile('Test Profile B', null, `https://pod.playground.solidlab.be/POD_NAME/profile/card#me`);
+  await popupPage.createProfile('Test Profile B', null, 'https://pod.playground.solidlab.be/POD_NAME/profile/card#me');
   await popupPage.createProfile('Test Profile A', null, `https://pod.playground.solidlab.be/${mainPage.randomPodname}/profile/card#me`);
   await popupPage.selectProfile('Test Profile A');
 
@@ -183,10 +181,10 @@ test('Switching profiles will invalidate any active authentication session', asy
   await popupPage.selectProfile('Test Profile B');
 
   await mainPage.page.reload();
-  await expect(mainPage.getPage().getByRole('heading', {name: 'Logged In!'})).not.toBeVisible();
+  await expect(mainPage.getPage().getByRole('heading', {name: 'Logged In!'})).toBeHidden();
 });
 
-test('Reloading the app restores the active profile', async ({page, mainPage, popupPage, context}) => {
+test('Reloading the app restores the active profile', async ({ mainPage, popupPage}) => {
   await mainPage.loadPage();
   await mainPage.register();
 

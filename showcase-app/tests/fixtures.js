@@ -33,7 +33,7 @@ export const test = base.extend({
     await use(popupPage);
   },
 
-  mainPage: async ({ page, context }, use) => {
+  mainPage: async ({ context }, use) => {
     const newTab = await context.newPage();
     const mainPage = new MainPage(context, newTab);
     await use(mainPage);
@@ -155,18 +155,3 @@ export const OPEN_ID_CONFIG_RESPONSE = {
   ]
 };
 
-const WEBID_BASE_URL = 'https://pod.playground.solidlab.be/';
-const WEBID_ENDPOINT = `${WEBID_BASE_URL}serge1/profile/card`;
-
-export const WEBID_RESPONSE = `@prefix foaf: <http://xmlns.com/foaf/0.1/>.
-@prefix solid: <http://www.w3.org/ns/solid/terms#>.
-
-<>
-    a foaf:PersonalProfileDocument;
-    foaf:maker <${WEBID_ENDPOINT}#me>;
-    foaf:primaryTopic <${WEBID_ENDPOINT}#me>.
-
-<${WEBID_ENDPOINT}#me>
-
-    solid:oidcIssuer <${WEBID_BASE_URL}>;
-    a foaf:Person.`;
