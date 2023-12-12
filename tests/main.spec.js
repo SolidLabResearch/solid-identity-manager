@@ -181,31 +181,27 @@ test('Clicking the settings button next to a profile opens the edit profile dial
   await expect(popupPage.page.getByPlaceholder("Your WebID")).toHaveValue("");
 });
 
-test('clicking delete profile button shows confirmation dialog', async ({ popupPage}) => {
+test('Clicking delete profile button shows confirmation dialog.', async ({ popupPage}) => {
   await popupPage.createProfile('A Profile', 'IDP A');
 
-  const settingsPage = await popupPage.openSettings();
+  await popupPage.openEditProfileDialog('A Profile');
 
-  await settingsPage.getByRole('button', {
-    name: 'A Profile',
-  }).click();
-
-  const confirmDialog = settingsPage.locator('#confirm-dialog');
+  const confirmDialog = popupPage.page.locator('#confirm-dialog');
   await expect(confirmDialog).toBeHidden();
 
-  await settingsPage.getByRole('button', {
+  await popupPage.page.getByRole('button', {
     name: 'Delete',
   }).click();
 
   await expect(confirmDialog).toBeVisible();
-  await expect(settingsPage.getByRole('heading', {
+  await expect(popupPage.page.getByRole('heading', {
     name: 'Are you sure?',
   }),).toBeVisible();
 
-  await expect(settingsPage.getByRole('button', {
+  await expect(popupPage.page.getByRole('button', {
     name: 'Yes',
   }),).toBeVisible();
-  await expect(settingsPage.getByRole('button', {
+  await expect(popupPage.page.getByRole('button', {
     name: 'No',
   })).toBeVisible();
 });
