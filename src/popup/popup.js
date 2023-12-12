@@ -1,34 +1,129 @@
 let availableIdentities = [];
 let internalPort;
 let activeIdentity;
-
-const addProfileScreen = {
-  displayName: document.querySelector('#add-profile-dialog input[name=displayname]'),
-  idp: document.querySelector('#add-profile-dialog input[name=idp]'),
-  webID: document.querySelector('#add-profile-dialog input[name=webid]'),
-  colors: document.querySelectorAll('#add-profile-dialog input[name=color]'),
-  form: document.querySelector('#add-profile-dialog form'),
-  close: document.querySelector('#add-profile-dialog .close-button'),
-  avatar: document.querySelector('#add-profile-dialog .avatar'),
-  dialog: document.querySelector('#add-profile-dialog')
-};
+let profileModus = 'create';
 
 /**
- * Initializes the add profile screen.
+ * Initializes the add / edit profile screen.
+ * If an identity is provided, the screen is initialized in edit mode.
  * Binds event listeners to the input fields and to the form.
+ * @param identity
  */
-const initAddProfileScreen = () => {
-  const ipdError = document.querySelector('#idp_error');
-  const webidError = document.querySelector('#webid_error');
-  const displayNameError = document.querySelector('#displayname_error');
+const initProfileDialog = (identity) => {
+  const profileDialog = document.querySelector('#profile-dialog');
+  const displayName = profileDialog.querySelector('input[name=displayname]');
+  const idp = profileDialog.querySelector('input[name=idp]');
+  const webID = profileDialog.querySelector('input[name=webid]');
+  const colors = profileDialog.querySelectorAll('input[name=color]');
+  const form = profileDialog.querySelector('form');
+  const avatar = profileDialog.querySelector('.avatar');
 
-  const { displayName, idp, webID, form, close, dialog, colors, avatar } = addProfileScreen;
+  if (identity) {
+    profileDialog.querySelector('h1').innerHTML = 'Edit Profile';
+    profileDialog.classList.add('update');
+    profileDialog.classList.remove('create');
+
+    displayName.value = identity.displayName;
+    idp.value = identity.idp;
+    webID.value = identity.webID;
+    avatar.innerHTML = identity.displayName.charAt(0).toUpperCase();
+    avatar.style.backgroundColor = identity.color.background;
+    avatar.style.color = identity.color.color;
+
+    profileDialog.querySelector(`.color-selection input[value=${identity.color.id}]`).checked = true;
+
+    idp.disabled = !!identity.webID;
+    webID.disabled = !!identity.idp;
+  } else {
+    profileDialog.querySelector('h1').innerHTML = 'Add new profile';
+    profileDialog.classList.add('create');
+    profileDialog.classList.remove('update');
+
+    avatar.innerHTML = '?';
+    avatar.style.background = colors[0].value;
+    form.reset();
+    idp.disabled = false;
+    webID.disabled = false;
+  }
+};
+
+const handleProfileDialogSubmit = (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData.entries());
+
+  let isValid = true;
+
+  const profileDialog = document.querySelector('#profile-dialog');
+
+  const displayNameInput = profileDialog.querySelector('input[name=displayname]');
+  const webidInput = profileDialog.querySelector('input[name=webid]');
+  const idpInput = profileDialog.querySelector('input[name=idp]');
+
+  if (displayNameInput.value.trim().length === 0) {
+    profileDialog.querySelector('input[name=displayname]').classList.add('error');
+    profileDialog.querySelector('input[name=displayname] + .error-explanation').textContent = 'You must provide a display name.';
+    isValid = false;
+  }
+  if (webidInput.value.trim().length === 0 && idpInput.value.trim().length === 0) {
+    profileDialog.querySelector('input[name=webid]').classList.add('error');
+    profileDialog.querySelector('input[name=idp]').classList.add('error');
+    profileDialog.querySelector('input[name=webid] + .error-explanation').textContent = 'Please provide either an Identity Provider or WebID.';
+    profileDialog.querySelector('input[name=idp] + .error-explanation').textContent = 'Please provide either an Identity Provider or WebID.';
+    isValid = false;
+  }
+  if (isValid) {
+    const profile = {
+      ...activeIdentity,
+      color: {id: data.color, color: 'white', background: data.color},
+      displayName: data.displayname,
+      idp: data.idp || '',
+      webID: data.webid || '',
+    };
+
+    internalPort.postMessage({
+      type: profileModus === 'create' ? 'create-profile' : 'update-profile',
+      data: profile,
+    });
+
+    // sync state after update
+    internalPort.postMessage({type: 'request-identities'});
+    internalPort.postMessage({type: 'request-active-identity'});
+
+    profileDialog.close();
+  }
+};
+
+const bindProfileDialogEvents = () => {
+  const profileDialog = document.querySelector('#profile-dialog');
+  const confirmDialog = document.querySelector('#confirm-dialog');
+
+  const form = profileDialog.querySelector('form');
+  const avatar = profileDialog.querySelector('.avatar');
+
+  const displayName = profileDialog.querySelector('input[name=displayname]');
+  const idp = profileDialog.querySelector('input[name=idp]');
+  const webID = profileDialog.querySelector('input[name=webid]');
+  const colors = profileDialog.querySelectorAll('input[name=color]');
+
+  const displayNameError = profileDialog.querySelector('input[name=displayname] + .error-explanation');
+  const webidError = profileDialog.querySelector('input[name=webid] + .error-explanation');
+  const ipdError = profileDialog.querySelector('input[name=idp] + .error-explanation');
+
+  const closeButton = profileDialog.querySelector('.close-button');
+  const deleteButton = profileDialog.querySelector('#delete-button');
+  const confirmDeleteButton = confirmDialog.querySelector('#confirm-delete-button');
+  const cancelDeleteButton = confirmDialog.querySelector('#cancel-delete-button');
+
   displayName.addEventListener('input', (e) => {
     if (e.target.value.trim().length > 0) {
       displayName.classList.remove('error');
       avatar.innerHTML = e.target.value.trim().charAt(0).toUpperCase();
+      displayNameError.textContent = '';
     }
   });
+
   for (const input of [idp, webID]) {
     input.addEventListener('input', (e) => {
       if (e.target.value.trim().length > 0) {
@@ -47,79 +142,52 @@ const initAddProfileScreen = () => {
   [idp, webID].forEach(i => i.addEventListener('input', inputListener));
 
   colors.forEach(
-    (input) => input.addEventListener('change', () => document.querySelector('#avatar').style.backgroundColor = input.value)
+    (input) => input.addEventListener('change', () => avatar.style.backgroundColor = input.value)
   );
 
-  close.addEventListener('click', () => {
-    dialog.close();
+  closeButton.addEventListener('click', () => {
+    profileDialog.close();
   });
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', handleProfileDialogSubmit);
+
+  deleteButton.addEventListener('click', e => {
     e.preventDefault();
-    const form = e.target;
+    confirmDialog.showModal();
+  });
 
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    let isValid = true;
-    if (displayName.value.trim().length === 0) {
-      displayName.classList.add('error');
-      displayNameError.textContent = 'You must provide a display name.';
-      isValid = false;
-    }
-    if (webID.value.trim().length === 0 && idp.value.trim().length === 0) {
-      webID.classList.add('error');
-      idp.classList.add('error');
-      ipdError.textContent = 'Please provide either an Identity Provider or WebID.';
-      webidError.textContent = 'Please provide either an Identity Provider or WebID.';
-      isValid = false;
-    }
-    if (isValid) {
-      const profile = {
-        color: { id: data.color, color: 'white', background: data.color },
-        displayName: data.displayname,
-        idp: data.idp || '',
-        webID: data.webid || '',
-      };
-      internalPort.postMessage({
-        type: 'create-profile',
-        data: profile,
-      });
-      const list = document.getElementById('identity-list');
-      const identityRow = createIdentityRow(profile);
-      list.appendChild(identityRow);
-
-      dialog.close();
-    }
+  cancelDeleteButton.addEventListener('click', () => confirmDialog.close());
+  confirmDeleteButton.addEventListener('click', () => {
+    confirmDialog.close();
+    profileDialog.close();
+    internalPort.postMessage({
+      type: 'delete-profile',
+      data: activeIdentity,
+    });
   });
 };
 
 const main = () => {
-  internalPort = chrome.runtime.connect({ name: 'popup' });
+  internalPort = chrome.runtime.connect({name: 'popup'});
   internalPort.onMessage.addListener(handleInternalMessage);
-  internalPort.postMessage({ type: 'request-identities' });
-  internalPort.postMessage({ type: 'request-active-identity' });
+  internalPort.postMessage({type: 'request-identities'});
+  internalPort.postMessage({type: 'request-active-identity'});
 
   document
     .getElementById('add-identity-button')
     .addEventListener('click', () => {
+      profileModus = 'create';
       clearError();
-      addProfileScreen.avatar.innerHTML = '?';
-      addProfileScreen.avatar.style.background = addProfileScreen.colors[0].value;
-      addProfileScreen.form.reset();
-      addProfileScreen.idp.disabled = false;
-      addProfileScreen.webID.disabled = false;
-      addProfileScreen.dialog.showModal();
+      const dialog = document.querySelector('#profile-dialog');
+      initProfileDialog();
+      dialog.showModal();
     });
-
-  document.getElementById('settings-button').addEventListener('click', () => {
-    openSettings();
-  });
 
   document.getElementById('close-error-button').addEventListener('click', () => {
     document.getElementById('error-message-container').classList.add('hidden');
   });
 
-  initAddProfileScreen();
+  bindProfileDialogEvents();
 };
 
 /**
@@ -158,7 +226,7 @@ const handleInternalMessage = (message) => {
   }
 
   if (message.type === 'active-identity-response-error') {
-    const { data: {displayName} } = message;
+    const {data: {displayName}} = message;
     handleError(`Unable to retrieve IDP from WebID for ${displayName}.`);
   }
 
@@ -190,26 +258,6 @@ const handleInternalMessage = (message) => {
   }
 };
 
-const openSettings = () => {
-  createCenteredPopup(720, 720, {
-    url: chrome.runtime.getURL('settings.html'),
-    type: 'popup',
-  });
-};
-
-const createCenteredPopup = (width, height, options) => {
-  const left = screen.width / 2 - width / 2;
-  const top = screen.height / 2 - height / 2;
-
-  chrome.windows.create({
-    ...options,
-    width,
-    height,
-    left,
-    top,
-  });
-};
-
 const createIdentityRow = (identity) => {
   const identityRow = document.createElement('li');
   identityRow.classList.add('identity-row');
@@ -237,7 +285,22 @@ const createIdentityRow = (identity) => {
     });
   });
 
+  const editButton = document.createElement('button');
+  editButton.classList.add('edit-button');
+  const editIcon = document.createElement('img');
+  editIcon.src = 'settings-cog.svg';
+  editButton.addEventListener('click', () => {
+    profileModus = 'update';
+    activeIdentity = identity;
+    const dialog = document.querySelector('#profile-dialog');
+    dialog.showModal();
+    initProfileDialog(identity);
+  });
+
+  editButton.appendChild(editIcon);
+
   identityRow.appendChild(button);
+  identityRow.appendChild(editButton);
 
   return identityRow;
 };

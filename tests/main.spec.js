@@ -280,6 +280,7 @@ test('confirming profile deletion removes the profile', async ({page, popupPage}
   // profile was removed from main popup page
   const identities = page.locator('section#identities');
   await expect(identities.getByRole('list')).toBeEmpty();
+  await expect(page.getByRole('heading', {name: 'A Profile'})).toBeHidden();
 });
 
 test('editing profile changes its attributes on settings and main page', async ({page, popupPage}) => {
