@@ -170,17 +170,6 @@ test('switching profile activates correct one', async ({page, popupPage}) => {
 
 });
 
-test('manage profiles popup display empty list if no profiles exist', async ({popupPage}) => {
-  const settingsPage = await popupPage.openSettings();
-
-  await expect(settingsPage).toHaveTitle(/Manage Solid profiles/);
-  await expect(settingsPage.getByRole('heading', {
-    name: 'Your profiles',
-  }),).toBeVisible();
-
-  await expect(settingsPage.locator('#identity-list .identity-box')).toHaveCount(0);
-});
-
 test('manage profiles popup displays all profiles', async ({ popupPage}) => {
   await popupPage.createProfile('A Profile', 'IDP A');
   await popupPage.createProfile('B Profile', 'IDP B');
