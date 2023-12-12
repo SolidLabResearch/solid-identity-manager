@@ -83,7 +83,7 @@ test('Removing profile inside the extension deactivates the profile', async ({pa
 
 });
 
-test('Clicking on the "Continue as " will redirect to login screen if active profile is not authenticated', async ({page, mainPage, popupPage, context}) => {
+test('Clicking on the "Continue as " will redirect to login screen if active profile is not authenticated', async ({page, mainPage, popupPage}) => {
   await mainPage.loadPage();
   await mainPage.register();
 
