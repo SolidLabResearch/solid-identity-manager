@@ -1,41 +1,9 @@
-import {test, expect, OPEN_ID_CONFIG_RESPONSE} from './fixtures';
+import {expect, test} from './fixtures';
 
-const WEBID_ENDPOINT = 'https://pod.playground.solidlab.be/serge1/profile/card#me';
-
-const WEBID_RESPONSE = `@prefix foaf: <http://xmlns.com/foaf/0.1/>.
-@prefix solid: <http://www.w3.org/ns/solid/terms#>.
-
-<>
-    a foaf:PersonalProfileDocument;
-    foaf:maker <https://pod.playground.solidlab.be/serge1/profile/card#me>;
-    foaf:primaryTopic <https://pod.playground.solidlab.be/serge1/profile/card#me>.
-
-<https://pod.playground.solidlab.be/serge1/profile/card#me>
-    
-    solid:oidcIssuer <https://pod.playground.solidlab.be/>;
-    a foaf:Person.`;
-
-const authFile = 'user.json';
-
-test('authenticate', async ({ page }) => {
-  // Perform authentication steps.
-  const id = test.info().parallelIndex;
-  await page.goto('https://pod.playground.solidlab.be/idp/register/');
-  await page.getByLabel(/Pod name/).fill('MY_POD_NAMExx' + id);
-  await page.getByLabel('Email').fill('xx@example.com');
-  await page.getByLabel(/Password/).fill('password');
-  await page.getByLabel(/Confirm password/).fill('password');
-  await page.getByRole('button', {name: /Sign up/}).click();
-
-  // Wait for success page
-  await expect(page.getByRole('heading', { name: /You've been signed up/ })).toBeVisible();
-
-  await page.context().storageState({ path: authFile });
-});
-
-test('page has correct title', async ({page}) => {
+test('Page has title and headlines', async ({page}) => {
   await page.goto('http://localhost:5173');
   await expect(page).toHaveTitle(/Solid Auth Showcase/);
+  await expect(page.getByRole('heading', {name: 'COOL SOLID APP'})).toBeVisible();
 });
 
 test('Default state with no active profile', async ({mainPage}) => {
@@ -116,33 +84,6 @@ test('Removing profile inside the extension deactivates the profile', async ({pa
 });
 
 test('Clicking on the "Continue as " will redirect to login screen if active profile is not authenticated', async ({page, mainPage, popupPage, context}) => {
-  await context.route(WEBID_ENDPOINT, async route => {
-    await route.fulfill({contentType: 'application/trig', body: WEBID_RESPONSE});
-  });
-  await context.route('https://pod.playground.solidlab.be/.well-known/openid-configuration', async route => {
-    await route.fulfill({contentType: 'application/json', json: OPEN_ID_CONFIG_RESPONSE});
-  });
-  await context.route(`${OPEN_ID_CONFIG_RESPONSE.authorization_endpoint}?*`, async route => {
-    await route.fulfill({contentType: 'text/html', body: 'SUCCESS'});
-  });
-
-  await mainPage.loadPage();
-  await page.waitForTimeout(1000);
-
-  await popupPage.openPopup();
-  await popupPage.createProfile('Test Profile A', null, WEBID_ENDPOINT);
-  await popupPage.selectProfile('Test Profile A');
-
-  await page.waitForTimeout(1000);
-
-  await mainPage.continueAs('Test Profile A');
-
-  await page.waitForTimeout(1000);
-  await expect(await mainPage.getPage().content()).toContain('SUCCESS');
-
-});
-
-test('When an active profile is authenticated, the app displays a message that the user is logged in', async ({ mainPage, popupPage}) => {
   await mainPage.loadPage();
   await mainPage.register();
 
@@ -153,11 +94,28 @@ test('When an active profile is authenticated, the app displays a message that t
   await mainPage.loadPage();
 
   await mainPage.continueAs('Test Profile A');
+
+  await page.waitForTimeout(1000);
+  await expect(await mainPage.getPage().content()).toContain('Log in');
+
+});
+
+test('When an active profile is authenticated, the app displays a message that the user is logged in', async ({mainPage, popupPage}) => {
+  await mainPage.loadPage();
+  await mainPage.register();
+
+  await popupPage.openPopup();
+  await popupPage.createProfile('Test Profile A', null, `https://pod.playground.solidlab.be/${mainPage.randomPodname}/profile/card#me`);
+  await popupPage.selectProfile('Test Profile A');
+
+  await mainPage.loadPage();
+  await mainPage.getPage().waitForTimeout(1000);
+
+  await mainPage.continueAs('Test Profile A');
   await mainPage.login();
 
   await mainPage.getPage().waitForTimeout(1000);
   await expect(mainPage.getPage().getByRole('heading', {name: 'Logged In!'})).toBeVisible();
-  // await page.context().storageState({ path: authFile });
 });
 
 test('Switching profiles will invalidate any active authentication session', async ({mainPage, popupPage}) => {
@@ -170,6 +128,7 @@ test('Switching profiles will invalidate any active authentication session', asy
   await popupPage.selectProfile('Test Profile A');
 
   await mainPage.loadPage();
+  await mainPage.getPage().waitForTimeout(1000);
 
   await mainPage.continueAs('Test Profile A');
   await mainPage.login();
@@ -184,7 +143,7 @@ test('Switching profiles will invalidate any active authentication session', asy
   await expect(mainPage.getPage().getByRole('heading', {name: 'Logged In!'})).toBeHidden();
 });
 
-test('Reloading the app restores the active profile', async ({ mainPage, popupPage}) => {
+test('Reloading the app restores the active profile', async ({mainPage, popupPage}) => {
   await mainPage.loadPage();
   await mainPage.register();
 
@@ -193,6 +152,7 @@ test('Reloading the app restores the active profile', async ({ mainPage, popupPa
   await popupPage.selectProfile('Test Profile A');
 
   await mainPage.loadPage();
+  await mainPage.getPage().waitForTimeout(1000);
 
   await mainPage.continueAs('Test Profile A');
   await mainPage.login();
@@ -205,7 +165,7 @@ test('Reloading the app restores the active profile', async ({ mainPage, popupPa
   await expect(mainPage.getPage().getByRole('heading', {name: 'Logged In!'})).toBeVisible();
 });
 
-test('Log out', async ({ mainPage, popupPage}) => {
+test('Log out', async ({mainPage, popupPage}) => {
   await mainPage.loadPage();
   await mainPage.register();
 
@@ -223,5 +183,4 @@ test('Log out', async ({ mainPage, popupPage}) => {
 
   await mainPage.page.getByRole('button', {name: 'Log out'}).click();
   await expect(mainPage.getPage().getByRole('heading', {name: 'Logged In!'})).toBeHidden();
-
 });
