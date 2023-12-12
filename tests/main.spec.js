@@ -170,19 +170,15 @@ test('switching profile activates correct one', async ({page, popupPage}) => {
 
 });
 
-test('manage profiles popup displays all profiles', async ({ popupPage}) => {
+test('Clicking the settings button next to a profile opens the edit profile dialog.', async ({ popupPage}) => {
   await popupPage.createProfile('A Profile', 'IDP A');
-  await popupPage.createProfile('B Profile', 'IDP B');
 
-  const settingsPage = await popupPage.openSettings();
+  await popupPage.openEditProfileDialog('A Profile');
 
-  await expect(settingsPage.locator('#identity-list .identity-box')).toHaveCount(2);
-  await expect(settingsPage.locator('#identity-list .identity-box').first()).toHaveText('A' + 'A Profile',);
-  await expect(settingsPage.locator('#identity-list .identity-box').last()).toHaveText('B' + 'B Profile',);
-
-  await settingsPage.getByRole('button', {
-    name: 'A Profile',
-  }).click();
+  await expect(popupPage.page.getByRole("heading", {name: /Edit Profile/})).toBeVisible();
+  await expect(popupPage.page.getByPlaceholder("The name in the list")).toHaveValue("A Profile");
+  await expect(popupPage.page.getByPlaceholder("Solid identity provider")).toHaveValue("IDP A");
+  await expect(popupPage.page.getByPlaceholder("Your WebID")).toHaveValue("");
 });
 
 test('clicking delete profile button shows confirmation dialog', async ({ popupPage}) => {

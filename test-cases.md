@@ -80,11 +80,13 @@ Each test is briefly described for easy reference.
   - Create multiple profiles.
   - Switch between them and verify the correct activation.
 
-### 11. Manage Profiles Popup Displays All Profiles
+### 11. Clicking the settings button next to a profile opens the edit profile dialog.
 
-- **Description**: Tests if all profiles are displayed in the manage profiles popup.
+- **Description**: Tests if a profile is correctly displayed in the update profile dialog.
 - **Test Steps**:
-  - Create profiles and verify their presence in the settings page.
+  - Create a profile.
+  - Click the settings button next to the profile.
+  - Verify that the profile is correctly displayed in the update profile dialog.
 
 ### 12. Clicking Delete Profile Button Shows Confirmation Dialog
 

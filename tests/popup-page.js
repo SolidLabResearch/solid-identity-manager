@@ -91,4 +91,15 @@ export class PopupPage {
     }).click();
   }
 
+  /**
+   * Opens the edit profile dialog for the given profile name.
+   * @param {string} name - The profile name.
+   */
+  async openEditProfileDialog(name) {
+    const rowLocator = await this.page.getByRole('listitem');
+    const listItem = rowLocator.filter({hasText: name});
+    const settingButton = await listItem.locator('.edit-button');
+    await settingButton.click();
+  }
+
 }
