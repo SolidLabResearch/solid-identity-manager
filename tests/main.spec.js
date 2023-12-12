@@ -105,9 +105,9 @@ test('create profile validates empty fields', async ({ page, popupPage }) => {
   await expect(displayName).toHaveClass('error');
   await expect(page.getByText('You must provide a display name')).toBeVisible();
   await expect(webid).toHaveClass('error');
-  await expect(page.locator('#webid_error')).toHaveText('Please provide either an Identity Provider or WebID.',);
+  await expect(page.locator('input[name=webid] + .error-explanation')).toHaveText('Please provide either an Identity Provider or WebID.',);
   await expect(idp).toHaveClass('error');
-  await expect(page.locator('#idp_error')).toHaveText('Please provide either an Identity Provider or WebID.',);
+  await expect(page.locator('input[name=idp] + .error-explanation')).toHaveText('Please provide either an Identity Provider or WebID.',);
 });
 
 test('creating a profile adds it to list of profiles', async ({ page, popupPage}) => {
