@@ -259,7 +259,6 @@ const handleInternalMessage = (message) => {
       }
     });
 
-    console.log('BOOM', activeIdentity)
     if (activeIdentity && !availableIdentities.find(i => i.id === activeIdentity.id)) {
       setActiveIdentity(null);
     }

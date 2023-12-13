@@ -270,47 +270,31 @@ test('Editing profile changes its attributes on main page.', async ({page, popup
   await expect(identities.locator('.identity-row').first()).toHaveText('X' + 'X Profile Edited',);
 });
 
-// Skipping this flaky test for now. Will be fixed in https://github.com/SolidLabResearch/solid-identity-manager/issues/16
-// The current implementation relies on the network messages being sent & received, and also a reload of the popup page.
-// Once the implementation of the Edit Profile page is done via a dialog, this won't be necessary and the state can be changed locally.
-test.skip('profile colors can be changed', async ({page, popupPage}) => {
+test('Profile colors can be changed.', async ({page, popupPage}) => {
   await popupPage.createProfile('A Profile', 'IDP A');
 
-  const settingsPage = await popupPage.openSettings();
-
-  await settingsPage.getByRole('button', {
-    name: 'A Profile',
-  }).click();
-
-  const avatar = settingsPage.locator('#avatar');
-  const originalProfileColor = await avatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'));
-
-  const lastColorButton = settingsPage.locator('#color-selection button').last();
-  const lastColorOption = await lastColorButton.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'));
-  expect(originalProfileColor).not.toEqual(lastColorOption);
-
-  await lastColorButton.click();
-
-  const newProfileColor = await avatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'));
-
-  expect(newProfileColor).toEqual(lastColorOption);
-
-  await settingsPage.getByRole('button', {
-    name: 'Save',
-  }).click();
-
-  const settingsAvatar = settingsPage.locator('.identity-box .avatar');
-  await expect(settingsAvatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'))).toEqual(lastColorOption);
-
-  await page.reload();
+  await test.step('change color to red', async () => {
+    await popupPage.openEditProfileDialog('A Profile');
+    await page.locator('label:has(input[value="red"])').check()
+    await page.getByRole('button', {
+      name: 'Save',
+    }).click();
+  });
 
   const mainAvatar = page.locator('#identity-header .avatar');
   const mainAvatarColor = await mainAvatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'));
-  expect(mainAvatarColor).toEqual(lastColorOption);
+  expect(mainAvatarColor).toEqual("rgb(255, 0, 0)");
 
-  const profileListAvatar = page.locator('#identity-list .avatar');
-  const profileListAvatarColor = await profileListAvatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'));
-  expect(profileListAvatarColor).toEqual(lastColorOption);
+  await test.step('change color to blue', async () => {
+    await popupPage.openEditProfileDialog('A Profile');
+    await page.locator('label:has(input[value="blue"])').check()
+    await page.getByRole('button', {
+      name: 'Save',
+    }).click();
+  });
+
+  const newAvatarColor = await mainAvatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'));
+  expect(newAvatarColor).toEqual("rgb(0, 0, 255)");
 });
 
 test('when editing a profile, IDP and WebID fields are mutually exclusive', async ({ popupPage }) => {
