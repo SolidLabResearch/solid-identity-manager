@@ -96,9 +96,9 @@ export class PopupPage {
    * @param {string} name - The profile name.
    */
   async openEditProfileDialog(name) {
-    const rowLocator = await this.page.getByRole('listitem');
+    const rowLocator = this.page.getByRole('listitem');
     const listItem = rowLocator.filter({hasText: name});
-    const settingButton = await listItem.locator('.edit-button');
+    const settingButton = listItem.locator('.edit-button');
     await settingButton.click();
   }
 

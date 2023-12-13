@@ -80,7 +80,7 @@ Each test is briefly described for easy reference.
   - Create multiple profiles.
   - Switch between them and verify the correct activation.
 
-### 11. Clicking the settings button next to a profile opens the edit profile dialog.
+### 11. Clicking the settings button next to a profile opens the edit profile dialog
 
 - **Description**: Tests if a profile is correctly displayed in the update profile dialog.
 - **Test Steps**:

@@ -175,10 +175,10 @@ test('Clicking the settings button next to a profile opens the edit profile dial
 
   await popupPage.openEditProfileDialog('A Profile');
 
-  await expect(popupPage.page.getByRole("heading", {name: /Edit Profile/})).toBeVisible();
-  await expect(popupPage.page.getByPlaceholder("The name in the list")).toHaveValue("A Profile");
-  await expect(popupPage.page.getByPlaceholder("Solid identity provider")).toHaveValue("IDP A");
-  await expect(popupPage.page.getByPlaceholder("Your WebID")).toHaveValue("");
+  await expect(popupPage.page.getByRole('heading', {name: /Edit Profile/})).toBeVisible();
+  await expect(popupPage.page.getByPlaceholder('The name in the list')).toHaveValue('A Profile');
+  await expect(popupPage.page.getByPlaceholder('Solid identity provider')).toHaveValue('IDP A');
+  await expect(popupPage.page.getByPlaceholder('Your WebID')).toHaveValue('');
 });
 
 test('Clicking delete profile button shows confirmation dialog.', async ({ popupPage}) => {
@@ -255,7 +255,7 @@ test('Editing profile changes its attributes on main page.', async ({page, popup
 
   await expect(page.locator('#avatar')).toHaveText('A');
 
-  await page.getByPlaceholder("The name in the list").fill('X Profile Edited');
+  await page.getByPlaceholder('The name in the list').fill('X Profile Edited');
   await page.getByRole('button', {
     name: 'Save',
   }).click();
@@ -275,7 +275,7 @@ test('Profile colors can be changed.', async ({page, popupPage}) => {
 
   await test.step('change color to red', async () => {
     await popupPage.openEditProfileDialog('A Profile');
-    await page.locator('label:has(input[value="red"])').check()
+    await page.locator('label:has(input[value="red"])').check();
     await page.getByRole('button', {
       name: 'Save',
     }).click();
@@ -283,18 +283,18 @@ test('Profile colors can be changed.', async ({page, popupPage}) => {
 
   const mainAvatar = page.locator('#identity-header .avatar');
   const mainAvatarColor = await mainAvatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'));
-  expect(mainAvatarColor).toEqual("rgb(255, 0, 0)");
+  expect(mainAvatarColor).toEqual('rgb(255, 0, 0)');
 
   await test.step('change color to blue', async () => {
     await popupPage.openEditProfileDialog('A Profile');
-    await page.locator('label:has(input[value="blue"])').check()
+    await page.locator('label:has(input[value="blue"])').check();
     await page.getByRole('button', {
       name: 'Save',
     }).click();
   });
 
   const newAvatarColor = await mainAvatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'));
-  expect(newAvatarColor).toEqual("rgb(0, 0, 255)");
+  expect(newAvatarColor).toEqual('rgb(0, 0, 255)');
 });
 
 test('When editing a profile, IDP and WebID fields are mutually exclusive', async ({ page, popupPage }) => {

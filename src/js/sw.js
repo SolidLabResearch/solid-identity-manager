@@ -212,7 +212,7 @@ const handleInternalMessage = async (message) => {
 
   if (message.type === 'delete-profile') {
     // Find and delete the profile in the list of available identities
-    availableIdentities = availableIdentities?.filter(item => item.id !== message.data.id)
+    availableIdentities = availableIdentities?.filter(item => item.id !== message.data.id);
 
     // Persist the list of identities to storage
     chrome.storage.local.set({ availableIdentities });

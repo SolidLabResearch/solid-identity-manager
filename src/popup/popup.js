@@ -7,7 +7,14 @@ let profileModus = 'create';
  * Initializes the add / edit profile screen.
  * If an identity is provided, the screen is initialized in edit mode.
  * Binds event listeners to the input fields and to the form.
- * @param identity
+ * @param {object} [identity] - Optional identity to initialize the screen with.
+ * @param {string} [identity.displayName] - The identity's display name.
+ * @param {string} [identity.idp] - The profile's IDP.
+ * @param {string} [identity.webID] - The profile's WebID.
+ * @param {object} [identity.color] - The profile's color preference.
+ * @param {string} [identity.color.id] - The profile's color identifier.
+ * @param {string} [identity.color.color] - The profile's foreground color preference.
+ * @param {string} [identity.color.background] - The profile's background color preference.
  */
 const initProfileDialog = (identity) => {
   const profileDialog = document.querySelector('#profile-dialog');
@@ -47,6 +54,11 @@ const initProfileDialog = (identity) => {
   }
 };
 
+/**
+ * Submit handler for the profile dialog.
+ * Can handle both profile create and profile update forms.
+ * @param {Event} e - The submit event.
+ */
 const handleProfileDialogSubmit = (e) => {
   e.preventDefault();
   const form = e.target;
@@ -95,6 +107,9 @@ const handleProfileDialogSubmit = (e) => {
   }
 };
 
+/**
+ * Wire up the events for the profile dialog.
+ */
 const bindProfileDialogEvents = () => {
   const profileDialog = document.querySelector('#profile-dialog');
   const confirmDialog = document.querySelector('#confirm-dialog');
@@ -169,6 +184,9 @@ const bindProfileDialogEvents = () => {
   });
 };
 
+/**
+ * The main script that gets fired when the popup is opened.
+ */
 const main = () => {
   internalPort = chrome.runtime.connect({name: 'popup'});
   internalPort.onMessage.addListener(handleInternalMessage);
@@ -221,8 +239,7 @@ const handleInternalMessage = (message) => {
     return;
   }
 
-  console.log('%cmessage', "color:yellow; background:green; padding: 4px;", message)
-
+  console.log('%cmessage', 'color:yellow; background:green; padding: 4px;', message);
 
   if (message.type === 'active-identity-response') {
     setActiveIdentity(message.data);
@@ -262,8 +279,6 @@ const handleInternalMessage = (message) => {
     if (activeIdentity && !availableIdentities.find(i => i.id === activeIdentity.id)) {
       setActiveIdentity(null);
     }
-
-    return;
   }
 };
 
