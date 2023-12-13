@@ -249,31 +249,21 @@ test('Confirming profile deletion removes the profile.', async ({page, popupPage
   await expect(page.getByRole('heading', {name: 'A Profile'})).toBeHidden();
 });
 
-test('editing profile changes its attributes on settings and main page', async ({page, popupPage}) => {
+test('Editing profile changes its attributes on main page.', async ({page, popupPage}) => {
   await popupPage.createProfile('A Profile', 'IDP A');
+  await popupPage.openEditProfileDialog('A Profile');
 
-  const settingsPage = await popupPage.openSettings();
+  await expect(page.locator('#avatar')).toHaveText('A');
 
-  await settingsPage.getByRole('button', {
-    name: 'A Profile',
-  }).click();
-
-  await expect(settingsPage.locator('#avatar')).toHaveText('A');
-
-  await settingsPage.locator('#display-name').fill('X Profile Edited');
-
-  await expect(settingsPage.locator('#avatar')).toHaveText('X');
-
-  await settingsPage.getByRole('button', {
+  await page.getByPlaceholder("The name in the list").fill('X Profile Edited');
+  await page.getByRole('button', {
     name: 'Save',
   }).click();
 
-  // profile was changed on the settings page
-  await expect(settingsPage.getByRole('button', {
+  await expect(page.getByRole('button', {
     name: 'X Profile Edited',
   })).toBeVisible();
-
-  await page.reload();
+  await expect(page.locator('#avatar')).toHaveText('X');
 
   // profile was edited on main popup page
   const identities = page.locator('section#identities');
