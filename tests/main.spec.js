@@ -297,19 +297,14 @@ test('Profile colors can be changed.', async ({page, popupPage}) => {
   expect(newAvatarColor).toEqual("rgb(0, 0, 255)");
 });
 
-test('when editing a profile, IDP and WebID fields are mutually exclusive', async ({ popupPage }) => {
+test('When editing a profile, IDP and WebID fields are mutually exclusive', async ({ page, popupPage }) => {
   await popupPage.createProfile('A Profile', 'IDP A');
+  await popupPage.openEditProfileDialog('A Profile');
 
-  const settingsPage = await popupPage.openSettings();
-
-  await settingsPage.getByRole('button', {
-    name: 'A Profile',
-  }).click();
-
-  const idp = settingsPage.locator('#idp');
+  const idp = page.locator('#idp');
   await expect(idp).toBeEditable();
 
-  const webid = settingsPage.locator('#webid');
+  const webid = page.locator('#webid');
   await expect(webid).toBeDisabled();
 
   await idp.clear();
@@ -322,50 +317,40 @@ test('when editing a profile, IDP and WebID fields are mutually exclusive', asyn
   await expect(idp).toBeEditable();
 });
 
-test('edits of IDP are persisted', async ({ popupPage }) => {
+test('Edits of IDP are persisted', async ({ page, popupPage }) => {
   await popupPage.createProfile('A Profile', 'IDP A');
+  await popupPage.openEditProfileDialog('A Profile');
 
-  const settingsPage = await popupPage.openSettings();
-
-  await settingsPage.getByRole('button', {
-    name: 'A Profile',
-  }).click();
-
-  const idp = settingsPage.locator('#idp');
+  const idp = page.locator('#idp');
   await expect(idp).toHaveValue('IDP A');
 
   await idp.fill('NEW IDP');
 
-  await settingsPage.getByRole('button', {
+  await page.getByRole('button', {
     name: 'Save',
   }).click();
 
-  await (settingsPage.getByRole('button', {
+  await (page.getByRole('button', {
     name: 'A Profile',
   })).click();
 
   await expect(idp).toHaveValue('NEW IDP');
 });
 
-test('edits of WebID are persisted', async ({ popupPage }) => {
+test('Edits of WebID are persisted', async ({ page, popupPage }) => {
   await popupPage.createProfile('A Profile', null, 'WEBID A');
+  await popupPage.openEditProfileDialog('A Profile');
 
-  const settingsPage = await popupPage.openSettings();
-
-  await settingsPage.getByRole('button', {
-    name: 'A Profile',
-  }).click();
-
-  const webid = settingsPage.locator('#webid');
+  const webid = page.locator('#webid');
   await expect(webid).toHaveValue('WEBID A');
 
   await webid.fill('NEW WEBID');
 
-  await settingsPage.getByRole('button', {
+  await page.getByRole('button', {
     name: 'Save',
   }).click();
 
-  await (settingsPage.getByRole('button', {
+  await (page.getByRole('button', {
     name: 'A Profile',
   })).click();
 
