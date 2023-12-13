@@ -227,32 +227,21 @@ test('Dismissing confirmation dialog for deletion closes the dialog and does not
   })).toBeVisible();
 });
 
-test('confirming profile deletion removes the profile', async ({page, popupPage}) => {
+test('Confirming profile deletion removes the profile.', async ({page, popupPage}) => {
   await popupPage.createProfile('A Profile', 'IDP A');
 
-  const settingsPage = await popupPage.openSettings();
+  await popupPage.openEditProfileDialog('A Profile');
 
-  await settingsPage.getByRole('button', {
-    name: 'A Profile',
-  }).click();
-
-  await settingsPage.getByRole('button', {
+  await popupPage.page.getByRole('button', {
     name: 'Delete',
   }).click();
 
-  await settingsPage.getByRole('button', {
+  await popupPage.page.getByRole('button', {
     name: 'Yes',
   }).click();
 
-  const confirmDialog = settingsPage.locator('#confirm-dialog');
+  const confirmDialog = popupPage.page.locator('#confirm-dialog');
   await expect(confirmDialog).toBeHidden();
-
-  // profile was removed from settings page
-  await expect(settingsPage.getByRole('button', {
-    name: 'A Profile',
-  })).toHaveCount(0);
-
-  await page.reload();
 
   // profile was removed from main popup page
   const identities = page.locator('section#identities');

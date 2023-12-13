@@ -75,7 +75,7 @@ const handleProfileDialogSubmit = (e) => {
   }
   if (isValid) {
     const profile = {
-      ...activeIdentity,
+      id: profileModus === 'create' ? undefined : activeIdentity.id,
       color: {id: data.color, color: 'white', background: data.color},
       displayName: data.displayname,
       idp: data.idp || '',
@@ -164,6 +164,8 @@ const bindProfileDialogEvents = () => {
       type: 'delete-profile',
       data: activeIdentity,
     });
+    internalPort.postMessage({type: 'request-identities'});
+    internalPort.postMessage({type: 'request-active-identity'});
   });
 };
 
@@ -219,6 +221,9 @@ const handleInternalMessage = (message) => {
     return;
   }
 
+  console.log('%cmessage', "color:yellow; background:green; padding: 4px;", message)
+
+
   if (message.type === 'active-identity-response') {
     setActiveIdentity(message.data);
 
@@ -253,6 +258,11 @@ const handleInternalMessage = (message) => {
         }
       }
     });
+
+    console.log('BOOM', activeIdentity)
+    if (activeIdentity && !availableIdentities.find(i => i.id === activeIdentity.id)) {
+      setActiveIdentity(null);
+    }
 
     return;
   }
@@ -308,22 +318,27 @@ const createIdentityRow = (identity) => {
 const setActiveIdentity = (identity) => {
   activeIdentity = identity;
   document.getElementById('no-identities-prompt').classList.add('hidden');
-  document.getElementById('identity-short').innerHTML = identity.displayName;
-
-  if (identity.metadata?.name) {
-    document.getElementById('full-name').innerHTML = identity.metadata.name;
-  } else {
-    document.getElementById('full-name').innerHTML = '';
-  }
 
   const identityHeader = document.getElementById('identity-header');
-  const avatar = identityHeader.querySelector('.avatar');
-  avatar.innerHTML = identity.displayName[0];
-  avatar.setAttribute(
-    'style',
-    `background-color: ${identity.color.background}; color: ${identity.color.color}`,
-  );
-  identityHeader.classList.remove('hidden');
+  if (identity) {
+    document.getElementById('identity-short').innerHTML = identity.displayName;
+    const avatar = identityHeader.querySelector('.avatar');
+
+    if (identity.metadata?.name) {
+      document.getElementById('full-name').innerHTML = identity.metadata.name;
+    } else {
+      document.getElementById('full-name').innerHTML = '';
+    }
+    avatar.innerHTML = identity.displayName[0];
+    avatar.setAttribute(
+      'style',
+      `background-color: ${identity.color.background}; color: ${identity.color.color}`,
+    );
+    identityHeader.classList.remove('hidden');
+  }
+  else {
+    identityHeader.classList.add('hidden');
+  }
 };
 
 main();
