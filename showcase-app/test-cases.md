@@ -36,7 +36,7 @@ This document provides an overview of the end-to-end tests for the plugin.
   - Setup 3 profiles in the extension.
   - Switch between the profiles and verify that the correct profile is always activated on the main page.
 
-### 5. Removing profile inside the extension deactivates the profile
+### 5. Removing profile inside the extension deactivates the profile inside the app
 
 - **Description**: Tests if removing a profile inside the extension deactivates the profile.
 - **Test Steps**:

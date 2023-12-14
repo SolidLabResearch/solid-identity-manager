@@ -35,7 +35,8 @@ test('Switching extension profiles activates the correct profile in the app', as
   await expect(mainPage.getPage().getByRole('button', {name: /Continue as Test Profile B/})).toBeVisible();
 });
 
-test('Removing profile inside the extension deactivates the profile', async ({page, mainPage, popupPage}) => {
+// skipping this test for now, will update once the new edit profile dialog is merged https://github.com/SolidLabResearch/solid-identity-manager/pull/18
+test.skip('Removing profile inside the extension deactivates the profile inside the app.', async ({page, mainPage, popupPage}) => {
   await test.step('Create profile A', async () => {
     await popupPage.openPopup();
     await popupPage.createProfile('Test Profile A', 'Test IPD A');
@@ -174,6 +175,7 @@ test('Log out', async ({mainPage, popupPage}) => {
   await popupPage.selectProfile('Test Profile A');
 
   await mainPage.loadPage();
+  await mainPage.getPage().waitForTimeout(1000);
 
   await mainPage.continueAs('Test Profile A');
   await mainPage.login();

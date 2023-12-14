@@ -31,28 +31,17 @@ export class PopupPage {
    * @param {string} webId - The WebID.
    */
   async createProfile(profileName, idp, webId) {
-    await this.openPopup();
-    const pagePromise = this.context.waitForEvent('page');
-
     await this.addButton.click();
 
-    const popup = await pagePromise;
-    await popup.waitForLoadState();
-
-    await popup.locator('#display-name').fill(profileName);
+    await this.page.locator('input[name="displayname"]').fill(profileName);
     if (idp) {
-      await popup.locator('#idp').fill(idp);
+      await this.page.locator('input[name="idp"]').fill(idp);
     }
     else if (webId) {
-      await popup.locator('#webid').fill(webId);
+      await this.page.locator('input[name="webid"]').fill(webId);
     }
 
-    await popup.waitForTimeout(1000);
-    await popup.getByRole('button', { name: 'Create' }).click();
-
-    await this.page.goto(`chrome-extension://${this.extensionId}/popup.html`);
-    await this.page.waitForTimeout(1000);
-    await this.page.reload();
+    await this.page.getByRole('button', { name: 'Create' }).click();
   }
 
   /**
