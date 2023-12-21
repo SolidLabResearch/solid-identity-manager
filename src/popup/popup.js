@@ -156,9 +156,9 @@ const bindProfileDialogEvents = () => {
   });
   [idp, webID].forEach(i => i.addEventListener('input', inputListener));
 
-  colors.forEach(
-    (input) => input.addEventListener('change', () => avatar.style.backgroundColor = input.value)
-  );
+  // colors.forEach(
+  //   (input) => input.addEventListener('change', () => avatar.style.backgroundColor = input.value)
+  // );
 
   closeButton.addEventListener('click', () => {
     profileDialog.close();
