@@ -123,19 +123,19 @@ section#identities {
   flex-grow: 1;
 }
 
+.identity-row {
+  display: flex;
+  justify-content: space-between;
+}
+#identity-list .identity-row .edit-button {
+  width: fit-content;
+}
+
 .identity-row svg {
   margin: auto 0;
   width: 20px;
 }
 
-#settings-button {
-  background-color: transparent;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.control:hover {
-  background-color: #eee;
-}
 
 dialog {
   margin: 0;
@@ -181,7 +181,34 @@ dialog {
   }
 }
 
-#add-profile-dialog {
+button.primary {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  border: none;
+
+  border-radius: 36px;
+  cursor: pointer;
+
+  font-weight: bold;
+  background-color: #7B4DFF;
+  color: white;
+}
+
+.actions, .create-actions, .update-actions {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1rem;
+}
+.create-actions {
+  justify-content: center;
+}
+.update-actions {
+  justify-content: space-between;
+}
+
+#profile-dialog{
   text-align: center;
 
   & .avatar-container {
@@ -193,24 +220,10 @@ dialog {
     font-size: 1.5rem;
     margin-top: 20px;
   }
-
-  & button.primary {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    padding: 12px;
-    border: none;
-
-    border-radius: 36px;
-    cursor: pointer;
-
-    font-weight: bold;
-    background-color: #7B4DFF;
-    color: white;
-  }
 }
 
-#color-selection {
+
+.color-selection {
   display: flex;
   gap: 10px;
   justify-content: center;
@@ -269,4 +282,38 @@ dialog {
 
 input.error {
   border: 2px solid red;
+}
+
+#confirm-dialog h2, #confirm-dialog h2 {
+  margin-bottom: 20px;
+}
+
+#confirm-dialog p {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+#confirm-dialog button {
+  margin-top: 20px;
+}
+.box {
+  padding: 20px;
+  margin: auto;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  background-color: white;
+}
+
+.login.box {
+  width: 16rem;
+  text-align: center;
+  height: fit-content;
+  top: -50%;
+}
+
+dialog.create .update-actions {
+  display: none
+}
+dialog.update .create-actions {
+  display: none
 }
