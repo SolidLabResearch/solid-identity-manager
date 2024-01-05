@@ -2,6 +2,12 @@
 
 This document provides an overview of the end-to-end tests for the plugin.
 
+### How to run the tests
+
+To run end-to-end tests, you must first have built the plugin (`npm run build`).
+Then you run the tests via `npm test`.
+If you want to run the tests interactively, you use `npm run test:ui`.
+
 ## Test Cases
 
 ### 1. Page has title and headlines
