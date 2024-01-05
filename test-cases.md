@@ -5,14 +5,14 @@ Each test is briefly described for easy reference.
 
 ## Test Cases
 
-### 1. Popup Page Has Title
+### 1. Popup page has title
 
 - **Description**: Tests if the popup page has the correct title.
 - **Test Steps**:
   - Open the popup page.
   - Check if the page title matches "Solid Identity Selector".
 
-### 2. Popup Page Without Profiles
+### 2. Popup page without profiles
 
 - **Description**: Tests the popup page behavior when no profiles are present.
 - **Test Steps**:
@@ -21,7 +21,7 @@ Each test is briefly described for easy reference.
   - Check if the list of identities is empty.
   - Ensure the 'Add' button is visible.
 
-### 3. Add Button Opens Add-New-Profile Page
+### 3. Add button opens add-new-profile page
 
 - **Description**: Tests if clicking the 'Add' button opens the add-new-profile page.
 - **Test Steps**:
@@ -30,7 +30,7 @@ Each test is briefly described for easy reference.
   - Verify that the new page title includes "Add a new Solid profile".
   - Ensure the heading "Add new profile" is visible.
 
-### 4. Add New Profile Page Has All Necessary Input Fields
+### 4. Add new profile page has all necessary input fields
 
 - **Description**: Tests if all necessary input fields are present on the add new profile page.
 - **Test Steps**:
@@ -38,14 +38,14 @@ Each test is briefly described for easy reference.
   - Verify visibility, editability, and emptiness of display name, idp, and webid textboxes.
   - Check placeholders for these textboxes.
 
-### 5. Mutual Exclusivity of IDP and WebID Fields
+### 5. Mutual exclusivity of IDP and WebID fields
 
 - **Description**: Tests if the IDP and WebID fields are mutually exclusive.
 - **Test Steps**:
   - Open the new profile page.
   - Fill in the IDP field and verify that the WebID field is disabled, and vice versa.
 
-### 6. Create Profile Validates Empty Fields
+### 6. Create profile validates empty fields
 
 - **Description**: Tests validation for empty fields when creating a profile.
 - **Test Steps**:
@@ -53,27 +53,27 @@ Each test is briefly described for easy reference.
   - Attempt to create a profile without filling in any fields.
   - Verify that error messages and classes are applied correctly.
 
-### 7. Creating a Profile Adds It to List of Profiles
+### 7. Creating a profile adds it to list of profiles
 
 - **Description**: Tests if creating a profile adds it to the list of profiles.
 - **Test Steps**:
   - Create a profile.
   - Verify that the profile appears in the list of identities.
 
-### 8. Creating 2 Profiles Adds Both to List of Profiles
+### 8. Creating 2 profiles adds both to list of profiles
 
 - **Description**: Tests if creating two profiles adds both to the list.
 - **Test Steps**:
   - Create two profiles.
   - Verify both profiles appear in the list.
 
-### 9. Profile Header Shows Name and Avatar of Active Profile
+### 9. Profile header shows name and avatar of active profile
 
 - **Description**: Tests if the profile header updates correctly.
 - **Test Steps**:
   - Create profiles and verify that the header shows the correct name and avatar.
 
-### 10. Switching Profile Activates Correct One
+### 10. Switching profile activates correct one
 
 - **Description**: Tests if switching profiles activates the correct one.
 - **Test Steps**:
@@ -88,51 +88,51 @@ Each test is briefly described for easy reference.
   - Click the settings button next to the profile.
   - Verify that the profile is correctly displayed in the update profile dialog.
 
-### 12. Clicking Delete Profile Button Shows Confirmation Dialog
+### 12. Clicking delete profile button shows confirmation dialog
 
 - **Description**: Tests if clicking the delete button shows a confirmation dialog.
 - **Test Steps**:
   - Create a profile and attempt to delete it.
   - Verify the appearance of the confirmation dialog.
 
-### 13. Dismissing Confirmation Dialog For Deletion
+### 13. Dismissing confirmation dialog for deletion
 
 - **Description**: Tests if dismissing the confirmation dialog prevents profile deletion.
 - **Test Steps**:
   - Dismiss the deletion confirmation dialog.
   - Verify that the profile still exists.
 
-### 14. Confirming Profile Deletion Removes the Profile
+### 14. Confirming profile deletion removes the profile
 
 - **Description**: Tests if confirming deletion removes the profile.
 - **Test Steps**:
   - Confirm profile deletion and verify its removal from all relevant pages.
 
-### 15. Editing Profile Changes Its Attributes
+### 15. Editing profile changes its attributes
 
 - **Description**: Tests if editing a profile updates its attributes.
 - **Test Steps**:
   - Edit a profile's attributes and verify updates on both settings and main page.
 
-### 16. Profile Colors Can Be Changed
+### 16. Profile colors can be changed
 
 - **Description**: Tests if profile colors can be changed.
 - **Test Steps**:
   - Change a profile's color and verify the update across different elements.
 
-### 17. When Editing a Profile, IDP and WebID Fields Are Mutually Exclusive
+### 17. When editing a profile, IDP and WebID fields are mutually exclusive
 
 - **Description**: Tests mutual exclusivity of IDP and WebID fields during profile editing.
 - **Test Steps**:
   - Edit a profile and verify the mutual exclusivity of IDP and WebID fields.
 
-### 18. Edits of IDP Are Persisted
+### 18. Edits of IDP are persisted
 
 - **Description**: Tests if changes to the IDP field are saved.
 - **Test Steps**:
   - Edit the IDP field of a profile and verify persistence of the change.
 
-### 19. Edits of WebID Are Persisted
+### 19. Edits of WebID are persisted
 
 - **Description**: Tests if changes to the WebID field are saved.
 - **Test Steps**:
