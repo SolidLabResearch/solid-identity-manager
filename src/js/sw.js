@@ -203,7 +203,7 @@ const handleInternalMessage = async (message) => {
     });
 
     // Check if the selected profile affected
-    if (activeIdentity.id === message.data.id) {
+    if (activeIdentity?.id === message.data.id) {
       activeIdentity = message.data;
     }
 
@@ -212,11 +212,7 @@ const handleInternalMessage = async (message) => {
 
   if (message.type === 'delete-profile') {
     // Find and delete the profile in the list of available identities
-    const indexToRemove = availableIdentities.findIndex(
-      ({ id }) => message.data.id === id,
-    );
-
-    availableIdentities.splice(indexToRemove, 1);
+    availableIdentities = availableIdentities?.filter(item => item.id !== message.data.id);
 
     // Persist the list of identities to storage
     chrome.storage.local.set({ availableIdentities });
@@ -228,7 +224,7 @@ const handleInternalMessage = async (message) => {
     });
 
     // Check if the selected profile affected
-    if (activeIdentity.id === message.data.id) {
+    if (activeIdentity?.id === message.data.id) {
       activeIdentity = undefined;
     }
   }

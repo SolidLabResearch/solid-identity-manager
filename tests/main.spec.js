@@ -105,9 +105,9 @@ test('create profile validates empty fields', async ({ page, popupPage }) => {
   await expect(displayName).toHaveClass('error');
   await expect(page.getByText('You must provide a display name')).toBeVisible();
   await expect(webid).toHaveClass('error');
-  await expect(page.locator('#webid_error')).toHaveText('Please provide either an Identity Provider or WebID.',);
+  await expect(page.locator('input[name=webid] + .error-explanation')).toHaveText('Please provide either an Identity Provider or WebID.',);
   await expect(idp).toHaveClass('error');
-  await expect(page.locator('#idp_error')).toHaveText('Please provide either an Identity Provider or WebID.',);
+  await expect(page.locator('input[name=idp] + .error-explanation')).toHaveText('Please provide either an Identity Provider or WebID.',);
 });
 
 test('creating a profile adds it to list of profiles', async ({ page, popupPage}) => {
@@ -170,205 +170,142 @@ test('switching profile activates correct one', async ({page, popupPage}) => {
 
 });
 
-test('manage profiles popup display empty list if no profiles exist', async ({popupPage}) => {
-  const settingsPage = await popupPage.openSettings();
-
-  await expect(settingsPage).toHaveTitle(/Manage Solid profiles/);
-  await expect(settingsPage.getByRole('heading', {
-    name: 'Your profiles',
-  }),).toBeVisible();
-
-  await expect(settingsPage.locator('#identity-list .identity-box')).toHaveCount(0);
-});
-
-test('manage profiles popup displays all profiles', async ({ popupPage}) => {
-  await popupPage.createProfile('A Profile', 'IDP A');
-  await popupPage.createProfile('B Profile', 'IDP B');
-
-  const settingsPage = await popupPage.openSettings();
-
-  await expect(settingsPage.locator('#identity-list .identity-box')).toHaveCount(2);
-  await expect(settingsPage.locator('#identity-list .identity-box').first()).toHaveText('A' + 'A Profile',);
-  await expect(settingsPage.locator('#identity-list .identity-box').last()).toHaveText('B' + 'B Profile',);
-
-  await settingsPage.getByRole('button', {
-    name: 'A Profile',
-  }).click();
-});
-
-test('clicking delete profile button shows confirmation dialog', async ({ popupPage}) => {
+test('Clicking the settings button next to a profile opens the edit profile dialog.', async ({ popupPage}) => {
   await popupPage.createProfile('A Profile', 'IDP A');
 
-  const settingsPage = await popupPage.openSettings();
+  await popupPage.openEditProfileDialog('A Profile');
 
-  await settingsPage.getByRole('button', {
-    name: 'A Profile',
-  }).click();
+  await expect(popupPage.page.getByRole('heading', {name: /Edit Profile/})).toBeVisible();
+  await expect(popupPage.page.getByPlaceholder('The name in the list')).toHaveValue('A Profile');
+  await expect(popupPage.page.getByPlaceholder('Solid identity provider')).toHaveValue('IDP A');
+  await expect(popupPage.page.getByPlaceholder('Your WebID')).toHaveValue('');
+});
 
-  const confirmDialog = settingsPage.locator('#confirm-dialog');
+test('Clicking delete profile button shows confirmation dialog.', async ({ popupPage}) => {
+  await popupPage.createProfile('A Profile', 'IDP A');
+
+  await popupPage.openEditProfileDialog('A Profile');
+
+  const confirmDialog = popupPage.page.locator('#confirm-dialog');
   await expect(confirmDialog).toBeHidden();
 
-  await settingsPage.getByRole('button', {
+  await popupPage.page.getByRole('button', {
     name: 'Delete',
   }).click();
 
   await expect(confirmDialog).toBeVisible();
-  await expect(settingsPage.getByRole('heading', {
+  await expect(popupPage.page.getByRole('heading', {
     name: 'Are you sure?',
   }),).toBeVisible();
 
-  await expect(settingsPage.getByRole('button', {
+  await expect(popupPage.page.getByRole('button', {
     name: 'Yes',
   }),).toBeVisible();
-  await expect(settingsPage.getByRole('button', {
+  await expect(popupPage.page.getByRole('button', {
     name: 'No',
   })).toBeVisible();
 });
 
-test('dismissing confirmation dialog for deletion closes the dialog and does not remove the profile', async ({popupPage}) => {
+test('Dismissing confirmation dialog for deletion closes the dialog and does not remove the profile.', async ({popupPage}) => {
   await popupPage.createProfile('A Profile', 'IDP A');
 
-  const settingsPage = await popupPage.openSettings();
+  await popupPage.openEditProfileDialog('A Profile');
 
-  await settingsPage.getByRole('button', {
-    name: 'A Profile',
-  }).click();
-
-  await settingsPage.getByRole('button', {
+  await popupPage.page.getByRole('button', {
     name: 'Delete',
   }).click();
 
-  await settingsPage.getByRole('button', {
+  await popupPage.page.getByRole('button', {
     name: 'No',
   }).click();
 
-  const confirmDialog = settingsPage.locator('#confirm-dialog');
+  const confirmDialog = popupPage.page.locator('#confirm-dialog');
   await expect(confirmDialog).toBeHidden();
 
-  await expect(settingsPage.getByRole('button', {
+  await expect(popupPage.page.getByRole('button', {
     name: 'A Profile',
   })).toBeVisible();
 });
 
-test('confirming profile deletion removes the profile', async ({page, popupPage}) => {
+test('Confirming profile deletion removes the profile.', async ({page, popupPage}) => {
   await popupPage.createProfile('A Profile', 'IDP A');
 
-  const settingsPage = await popupPage.openSettings();
+  await popupPage.openEditProfileDialog('A Profile');
 
-  await settingsPage.getByRole('button', {
-    name: 'A Profile',
-  }).click();
-
-  await settingsPage.getByRole('button', {
+  await popupPage.page.getByRole('button', {
     name: 'Delete',
   }).click();
 
-  await settingsPage.getByRole('button', {
+  await popupPage.page.getByRole('button', {
     name: 'Yes',
   }).click();
 
-  const confirmDialog = settingsPage.locator('#confirm-dialog');
+  const confirmDialog = popupPage.page.locator('#confirm-dialog');
   await expect(confirmDialog).toBeHidden();
-
-  // profile was removed from settings page
-  await expect(settingsPage.getByRole('button', {
-    name: 'A Profile',
-  })).toHaveCount(0);
-
-  await page.reload();
 
   // profile was removed from main popup page
   const identities = page.locator('section#identities');
   await expect(identities.getByRole('list')).toBeEmpty();
+  await expect(page.getByRole('heading', {name: 'A Profile'})).toBeHidden();
 });
 
-test('editing profile changes its attributes on settings and main page', async ({page, popupPage}) => {
+test('Editing profile changes its attributes on main page.', async ({page, popupPage}) => {
   await popupPage.createProfile('A Profile', 'IDP A');
+  await popupPage.openEditProfileDialog('A Profile');
 
-  const settingsPage = await popupPage.openSettings();
+  await expect(page.locator('#avatar')).toHaveText('A');
 
-  await settingsPage.getByRole('button', {
-    name: 'A Profile',
-  }).click();
-
-  await expect(settingsPage.locator('#avatar')).toHaveText('A');
-
-  await settingsPage.locator('#display-name').fill('X Profile Edited');
-
-  await expect(settingsPage.locator('#avatar')).toHaveText('X');
-
-  await settingsPage.getByRole('button', {
+  await page.getByPlaceholder('The name in the list').fill('X Profile Edited');
+  await page.getByRole('button', {
     name: 'Save',
   }).click();
 
-  // profile was changed on the settings page
-  await expect(settingsPage.getByRole('button', {
+  await expect(page.getByRole('button', {
     name: 'X Profile Edited',
   })).toBeVisible();
-
-  await page.reload();
+  await expect(page.locator('#avatar')).toHaveText('X');
 
   // profile was edited on main popup page
   const identities = page.locator('section#identities');
   await expect(identities.locator('.identity-row').first()).toHaveText('X' + 'X Profile Edited',);
 });
 
-// Skipping this flaky test for now. Will be fixed in https://github.com/SolidLabResearch/solid-identity-manager/issues/16
-// The current implementation relies on the network messages being sent & received, and also a reload of the popup page.
-// Once the implementation of the Edit Profile page is done via a dialog, this won't be necessary and the state can be changed locally.
-test.skip('profile colors can be changed', async ({page, popupPage}) => {
+test('Profile colors can be changed.', async ({page, popupPage}) => {
   await popupPage.createProfile('A Profile', 'IDP A');
 
-  const settingsPage = await popupPage.openSettings();
-
-  await settingsPage.getByRole('button', {
-    name: 'A Profile',
-  }).click();
-
-  const avatar = settingsPage.locator('#avatar');
-  const originalProfileColor = await avatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'));
-
-  const lastColorButton = settingsPage.locator('#color-selection button').last();
-  const lastColorOption = await lastColorButton.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'));
-  expect(originalProfileColor).not.toEqual(lastColorOption);
-
-  await lastColorButton.click();
-
-  const newProfileColor = await avatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'));
-
-  expect(newProfileColor).toEqual(lastColorOption);
-
-  await settingsPage.getByRole('button', {
-    name: 'Save',
-  }).click();
-
-  const settingsAvatar = settingsPage.locator('.identity-box .avatar');
-  await expect(settingsAvatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'))).toEqual(lastColorOption);
-
-  await page.reload();
+  await test.step('change color to red', async () => {
+    await popupPage.openEditProfileDialog('A Profile');
+    await page.locator('label:has(input[value="red"])').check();
+    await page.getByRole('button', {
+      name: 'Save',
+    }).click();
+  });
+  await page.waitForTimeout(100)
 
   const mainAvatar = page.locator('#identity-header .avatar');
   const mainAvatarColor = await mainAvatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'));
-  expect(mainAvatarColor).toEqual(lastColorOption);
+  expect(mainAvatarColor).toEqual('rgb(255, 0, 0)');
 
-  const profileListAvatar = page.locator('#identity-list .avatar');
-  const profileListAvatarColor = await profileListAvatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'));
-  expect(profileListAvatarColor).toEqual(lastColorOption);
+  await test.step('change color to blue', async () => {
+    await popupPage.openEditProfileDialog('A Profile');
+    await page.locator('label:has(input[value="blue"])').check();
+    await page.getByRole('button', {
+      name: 'Save',
+    }).click();
+  });
+
+  const newAvatarColor = await mainAvatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'));
+  expect(newAvatarColor).toEqual('rgb(0, 0, 255)');
 });
 
-test('when editing a profile, IDP and WebID fields are mutually exclusive', async ({ popupPage }) => {
+test('When editing a profile, IDP and WebID fields are mutually exclusive', async ({ page, popupPage }) => {
   await popupPage.createProfile('A Profile', 'IDP A');
+  await popupPage.openEditProfileDialog('A Profile');
 
-  const settingsPage = await popupPage.openSettings();
-
-  await settingsPage.getByRole('button', {
-    name: 'A Profile',
-  }).click();
-
-  const idp = settingsPage.locator('#idp');
+  const idp = page.locator('#idp');
   await expect(idp).toBeEditable();
 
-  const webid = settingsPage.locator('#webid');
+  const webid = page.locator('#webid');
   await expect(webid).toBeDisabled();
 
   await idp.clear();
@@ -381,50 +318,40 @@ test('when editing a profile, IDP and WebID fields are mutually exclusive', asyn
   await expect(idp).toBeEditable();
 });
 
-test('edits of IDP are persisted', async ({ popupPage }) => {
+test('Edits of IDP are persisted', async ({ page, popupPage }) => {
   await popupPage.createProfile('A Profile', 'IDP A');
+  await popupPage.openEditProfileDialog('A Profile');
 
-  const settingsPage = await popupPage.openSettings();
-
-  await settingsPage.getByRole('button', {
-    name: 'A Profile',
-  }).click();
-
-  const idp = settingsPage.locator('#idp');
+  const idp = page.locator('#idp');
   await expect(idp).toHaveValue('IDP A');
 
   await idp.fill('NEW IDP');
 
-  await settingsPage.getByRole('button', {
+  await page.getByRole('button', {
     name: 'Save',
   }).click();
 
-  await (settingsPage.getByRole('button', {
+  await (page.getByRole('button', {
     name: 'A Profile',
   })).click();
 
   await expect(idp).toHaveValue('NEW IDP');
 });
 
-test('edits of WebID are persisted', async ({ popupPage }) => {
+test('Edits of WebID are persisted', async ({ page, popupPage }) => {
   await popupPage.createProfile('A Profile', null, 'WEBID A');
+  await popupPage.openEditProfileDialog('A Profile');
 
-  const settingsPage = await popupPage.openSettings();
-
-  await settingsPage.getByRole('button', {
-    name: 'A Profile',
-  }).click();
-
-  const webid = settingsPage.locator('#webid');
+  const webid = page.locator('#webid');
   await expect(webid).toHaveValue('WEBID A');
 
   await webid.fill('NEW WEBID');
 
-  await settingsPage.getByRole('button', {
+  await page.getByRole('button', {
     name: 'Save',
   }).click();
 
-  await (settingsPage.getByRole('button', {
+  await (page.getByRole('button', {
     name: 'A Profile',
   })).click();
 
