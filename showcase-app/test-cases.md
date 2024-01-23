@@ -2,6 +2,12 @@
 
 This document provides an overview of the end-to-end tests for the plugin.
 
+### How to run the tests
+
+To run end-to-end tests, you must first have built the plugin (run `npm run build` inside the project root directory).
+Then you run the tests via `npm test`.
+If you want to run the tests interactively, you use `npm run test:ui`.
+
 ## Test Cases
 
 ### 1. Page has title and headlines
@@ -36,7 +42,7 @@ This document provides an overview of the end-to-end tests for the plugin.
   - Setup 3 profiles in the extension.
   - Switch between the profiles and verify that the correct profile is always activated on the main page.
 
-### 5. Removing profile inside the extension deactivates the profile
+### 5. Removing profile inside the extension deactivates the profile inside the app
 
 - **Description**: Tests if removing a profile inside the extension deactivates the profile.
 - **Test Steps**:
@@ -63,7 +69,7 @@ This document provides an overview of the end-to-end tests for the plugin.
   - Switch to the other profile.
   - Verify that the active session is invalidated.
 
-### 8. When an active profile is authenticated, the app display a message that the user is logged in
+### 8. When an active profile is authenticated, the app displays a message that the user is logged in
 
 - **Description**: Tests if the authenticated state is correctly displayed
 - **Test Steps**:
