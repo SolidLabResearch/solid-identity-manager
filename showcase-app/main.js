@@ -1,49 +1,44 @@
-import {
-  fetch,
-  login,
-  getDefaultSession,
-  handleIncomingRedirect,
-} from '@inrupt/solid-client-authn-browser';
-import {
-  getSolidDataset,
-  getThing,
-  getStringNoLocale,
-} from '@inrupt/solid-client';
-import { SCHEMA_INRUPT } from '@inrupt/vocab-common-rdf';
+import {fetch, getDefaultSession, handleIncomingRedirect, login,} from '@inrupt/solid-client-authn-browser';
+import {getSolidDataset, getStringNoLocale, getThing,} from '@inrupt/solid-client';
+import {SCHEMA_INRUPT} from '@inrupt/vocab-common-rdf';
 import IdentityWidget from './plugin/identityPlugin';
-
-import './reset.css';
-import './style.css';
-
-document.querySelector('#app').innerHTML = `
-  <div id="login-card" class="card hidden">
-    <h1 class="product-title">Cool<br />Solid<br />App</h1>
-    <h2>Log in with your Solid Identity</h2>
-    <form>
-      <fieldset>
-        <label>Identity</label>
-        <input type="text" placeholder="WebID or IDP (INOP)" />
-      </fieldset>
-      <button>Log in</button>
-    </form>
-    <section id="one-click-login" class="hidden">
-      <hr />
-      <button class="oidc-login-button" id="login-with-extension">
-        <img src="/solid-48.png" alt="solid logo"/>
-        <span id="login-with-extension-text"></span>
-      </button>
-    </section>
-  </div>
-
-  <div id="app-card" class="card hidden">
-    <h2>Logged in!</h2>
-    <p>You're now logged in!</p>
-
-    <button id="logout-button">Log out</button>
-  </div>
-`;
+import {QueryEngine} from '@comunica/query-sparql';
 
 let identityWidget;
+
+/**
+ * Sets up the login form handler, binding the input change and form submit events.
+ */
+const setupFormHandler = () => {
+  const errorIdentity = document.querySelector('#error-identity');
+  document.querySelector('#login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const {identity} = Object.fromEntries(formData);
+
+    try {
+      const idps = await getIDPsFromWebID(identity);
+      if (idps.length > 0) {
+        await login({
+          oidcIssuer: idps?.[0],
+          redirectUrl: window.location.href,
+          clientName: 'Cool Solid App (showcase)',
+        });
+      } else {
+        errorIdentity.classList.remove('hidden');
+      }
+    } catch (e) {
+      console.log('erorr', e);
+      errorIdentity.classList.remove('hidden');
+    }
+  });
+
+  document.querySelector('#identity').addEventListener('input', async () => {
+    if (!errorIdentity.classList.contains('hidden')) {
+      errorIdentity.classList.add('hidden');
+    }
+  });
+};
 
 /**
  * Application-side code for demonstration purposes.
@@ -51,19 +46,35 @@ let identityWidget;
 const main = async () => {
   // Create new link to Chrome extension and link callback to detect changes in identity:
   identityWidget = new IdentityWidget();
-  identityWidget.onIdentityChanged(handleIdentityChange);
+
+  setupFormHandler();
+
+  if (identityWidget.isExtensionInstalled) {
+    identityWidget.onIdentityChanged(handleIdentityChange);
+  }
 
   // Restore session if available:
-  await handleIncomingRedirect({ restorePreviousSession: true });
+  await handleIncomingRedirect({restorePreviousSession: true});
 
   // You can get a list of all identities currently available from the chrome extension:
   // const identities = await identityWidget.getIdentities();
 
   await updateState();
+  if (!identityWidget.isExtensionInstalled) {
+    document.getElementById('login-card').classList.remove('hidden');
+  }
 };
 
 // Invalidates the application - purely checks whether logged in or not and updates app state based on that
 const updateState = async () => {
+  const noExtensionWarning = document.querySelector("#no-extension-warning")
+  if (identityWidget.isExtensionInstalled) {
+    noExtensionWarning.classList.add("hidden")
+  }
+  else {
+    noExtensionWarning.classList.remove("hidden")
+  }
+
   if (getDefaultSession().info.isLoggedIn) {
     console.log(
       '%cLOGGED IN',
@@ -72,6 +83,7 @@ const updateState = async () => {
     );
     document.getElementById('app-card').classList.remove('hidden');
     document.getElementById('login-card').classList.add('hidden');
+    document.getElementById('webid').innerHTML = getDefaultSession().info.webId;
 
     const session = getDefaultSession();
 
@@ -83,6 +95,13 @@ const updateState = async () => {
 
     // Getting the name from the vcard if exists
     const name = getStringNoLocale(me, SCHEMA_INRUPT.name);
+
+    if (name) {
+      document.querySelector('dl:has(#name)').classList.remove('hidden');
+      document.querySelector('#name').innerHTML = name;
+    } else {
+      document.querySelector('dl:has(#name)').classList.add('hidden');
+    }
 
     // By means of an example, we forward the metadata from the pod to the extension using metadata and an update event
     identityWidget.updateProfile({
@@ -158,5 +177,26 @@ document
     e.preventDefault();
     await logout();
   });
+
+/**
+ * Fetches identity providers for a given WebID.
+ * @param {string} webId - The WebID.
+ * @param {number} limit - The maximum number of IDPs to return.
+ * @returns {Promise<string[]>} - The IDPs.
+ */
+async function getIDPsFromWebID(webId, limit = 1) {
+  const queryEngine = new QueryEngine();
+  const bindingsStream = await queryEngine.queryBindings(`
+    SELECT ?idp WHERE {
+      <${webId}> <http://www.w3.org/ns/solid/terms#oidcIssuer> ?idp
+    } LIMIT ${limit}`,
+  {
+      sources: [webId],
+    },
+  );
+
+  const bindings = await bindingsStream.toArray();
+  return bindings.map((a) => a.get('idp').value);
+}
 
 main();

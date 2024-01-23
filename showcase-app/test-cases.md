@@ -95,3 +95,30 @@ If you want to run the tests interactively, you use `npm run test:ui`.
   - Reload the page.
   - Verify that the active profile is still displayed.
 
+### 11. Login without extension using WebID
+
+- **Description**: Test the login flow using a WebID input field.
+- **Test Steps**:
+  - Register a profile.
+  - Load main page.
+  - Enter the profile's WebID in the input field.
+  - Log in using profile's credentials.
+  - Verify that upon redirect to the main page, the app is authenticated.
+
+### 12. Displays logged in profile's WebID when available
+
+- **Description**: Test if the profile's name is displayed when it's returned from the identity provider
+- **Test Steps**:
+  - Register a profile.
+  - Mock the IDP's response to include a profile name.
+  - Load main page.
+  - Enter the profile's WebID in the input field.
+  - Log in using profile's credentials.
+  - Verify that upon redirect to the main page displays the profile's name.
+
+### 13. Displays info message if the extension is not installed
+
+- **Description**: Test if a connection can be established with the extension, showing a warning if unsuccessful.
+- **Test Steps**:
+  - Verify that upon redirect to the main page displays the profile's name.
+

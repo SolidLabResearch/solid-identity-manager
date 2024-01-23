@@ -18,6 +18,7 @@ export default class IdentityWidget {
   port;
   identityChangedHandler;
   activeIdentity;
+  isExtensionInstalled = false;
 
   constructor() {
     this._initializeConnection();
@@ -33,10 +34,13 @@ export default class IdentityWidget {
    * @private
    */
   _initializeConnection = () => {
-    this.port = chrome.runtime.connect(EXTENSION_ID);
-    this.port.onDisconnect.addListener(this._handleDisconnect);
-    this.port.onMessage.addListener(this._handleMessageFromExtension);
-    this.port.postMessage({ type: 'request-active-identity' });
+    this.port = chrome?.runtime?.connect(EXTENSION_ID);
+    if (this.port) {
+      this.isExtensionInstalled = true;
+      this.port.onDisconnect.addListener(this._handleDisconnect);
+      this.port.onMessage.addListener(this._handleMessageFromExtension);
+      this.port.postMessage({ type: 'request-active-identity' });
+    }
   };
 
   _handleDisconnect = () => {
