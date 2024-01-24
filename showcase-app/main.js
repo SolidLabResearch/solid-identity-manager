@@ -1,10 +1,10 @@
 import {fetch, getDefaultSession, handleIncomingRedirect, login,} from '@inrupt/solid-client-authn-browser';
 import {getSolidDataset, getStringNoLocale, getThing,} from '@inrupt/solid-client';
 import {SCHEMA_INRUPT} from '@inrupt/vocab-common-rdf';
-import IdentityWidget from './plugin/identity-plugin';
+import IdentityPlugin from './plugin/identity-plugin';
 import {QueryEngine} from '@comunica/query-sparql';
 
-let identityWidget;
+let identityPlugin;
 
 /**
  * Sets up the login form handler, binding the input change and form submit events.
@@ -45,22 +45,22 @@ const setupFormHandler = () => {
  */
 const main = async () => {
   // Create new link to Chrome extension and link callback to detect changes in identity:
-  identityWidget = new IdentityWidget();
+  identityPlugin = new IdentityPlugin();
 
   setupFormHandler();
 
-  if (identityWidget.isExtensionInstalled) {
-    identityWidget.onIdentityChanged(handleIdentityChange);
+  if (identityPlugin.isExtensionInstalled) {
+    identityPlugin.onIdentityChanged(handleIdentityChange);
   }
 
   // Restore session if available:
   await handleIncomingRedirect({restorePreviousSession: true});
 
   // You can get a list of all identities currently available from the chrome extension:
-  // const identities = await identityWidget.getIdentities();
+  // const identities = await identityPlugin.getIdentities();
 
   await updateState();
-  if (!identityWidget.isExtensionInstalled) {
+  if (!identityPlugin.isExtensionInstalled) {
     document.getElementById('login-card').classList.remove('hidden');
   }
 };
@@ -68,7 +68,7 @@ const main = async () => {
 // Invalidates the application - purely checks whether logged in or not and updates app state based on that
 const updateState = async () => {
   const noExtensionWarning = document.querySelector("#no-extension-warning")
-  if (identityWidget.isExtensionInstalled) {
+  if (identityPlugin.isExtensionInstalled) {
     noExtensionWarning.classList.add("hidden")
   }
   else {
@@ -104,8 +104,8 @@ const updateState = async () => {
     }
 
     // By means of an example, we forward the metadata from the pod to the extension using metadata and an update event
-    identityWidget.updateProfile({
-      ...identityWidget.activeIdentity,
+    identityPlugin.updateProfile({
+      ...identityPlugin.activeIdentity,
       metadata: {
         name, // The name is also a property used by the extension to show more specific data once a user has finally logged in
       },
@@ -148,7 +148,7 @@ const handleIdentityChange = async (newIdentity) => {
 const startLogin = async () => {
   if (!getDefaultSession().info.isLoggedIn) {
     await login({
-      oidcIssuer: identityWidget.activeIdentity.idpOrWebID,
+      oidcIssuer: identityPlugin.activeIdentity.idpOrWebID,
       redirectUrl: window.location.href,
       clientName: 'Cool Solid App (showcase)',
     });

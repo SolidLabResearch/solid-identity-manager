@@ -8,13 +8,13 @@ const EXTENSION_ID = 'jhojffnfpoedbmolmgnddndjhmonmhnl';
 const DEBUG = true;
 
 /**
- * This widget serves as a (temporary or not) interface between a solid application and the identity Chrome extension.
- * The idea of this widget is to make life easier developing a solid app that can make use of identities/profiles defined by the user in a single location.
+ * This plugin serves as a (temporary or not) interface between a solid application and the identity Chrome extension.
+ * The idea of this plugin is to make life easier developing a solid app that can make use of identities/profiles defined by the user in a single location.
  * Ideally the extension leverages user effort to keep profiles in one place.
- * The widget is more a developer-experience enhancement for those developing solid apps.
- * The widget acts as a bridget between a solid app living in the scope of a single tab to get profiles and updates from the extension.
+ * The plugin is more a developer-experience enhancement for those developing solid apps.
+ * The plugin acts as a bridget between a solid app living in the scope of a single tab to get profiles and updates from the extension.
  */
-export default class IdentityWidget {
+export default class IdentityPlugin {
   port;
   identityChangedHandler;
   activeIdentity;
