@@ -120,5 +120,6 @@ If you want to run the tests interactively, you use `npm run test:ui`.
 
 - **Description**: Test if a connection can be established with the extension, showing a warning if unsuccessful.
 - **Test Steps**:
-  - Verify that upon redirect to the main page displays the profile's name.
+  - Start the app without the extension installed.
+  - Verify that the app displays a warning message.
 
