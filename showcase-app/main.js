@@ -1,7 +1,7 @@
 import {fetch, getDefaultSession, handleIncomingRedirect, login,} from '@inrupt/solid-client-authn-browser';
 import {getSolidDataset, getStringNoLocale, getThing,} from '@inrupt/solid-client';
 import {SCHEMA_INRUPT} from '@inrupt/vocab-common-rdf';
-import IdentityWidget from './plugin/identityPlugin';
+import IdentityWidget from './plugin/identity-plugin';
 import {QueryEngine} from '@comunica/query-sparql';
 
 let identityWidget;
