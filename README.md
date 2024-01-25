@@ -33,6 +33,9 @@ This will start up the build-process with hot-reload.
 To add the extension to the browser, navigate to `chrome://extensions/` and click `Load unpacked`.
 Navigate and add the `dist/` folder of this project.
 
+To publish the extension to the Chrome Web Store, upload `releases/solid-identity-manager.zip` to the store.
+This zip file is generated upon build `npm run build`.
+
 Hot-reloading replenishes the files every time you save something in `src/`.
 In some cases, mainly when errors occur, you must reload the module in the `chrome://extensions/`.
 It should not be removed. You may pin the extension for convenience.
