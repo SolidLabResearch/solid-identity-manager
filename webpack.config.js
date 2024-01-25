@@ -1,5 +1,6 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ZipPlugin = require('zip-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -27,6 +28,10 @@ module.exports = {
         }
       ]
     }),
+    new ZipPlugin({
+      path: '../releases',
+      filename: 'solid-identity-manager.zip',
+    })
   ],
   mode: 'production'
 };
