@@ -51,18 +51,18 @@ the option will be shown to continue as the active set profile.
 
 ## Publish to Chrome Web Store
 
-To publish the extension to the Chrome Web Store, first build the extension.
+To publish the extension to the Chrome Web Store:
 
-```shell
-npm run build
-```
+1. Build the extension (`npm run build`) to generate a release zip file inside `./releases`.
+2. Upload the zip file to your Chrome Web Store Developer Dashboard 
+(see [official Google guide](https://developer.chrome.com/docs/webstore) for details).
 
-This will generate zip file inside the `./releases` directory called `<name>-<version>.zip`.
-The extension `name` can be changed inside `./src/manifest.json`. The version is sourced from `./package.json`.
-So to bump a version, run `npm version <patch|minor|major>`, which will increase it in `./package.json`, then run 
+## Release versioning
+
+The build step generates a zip file called `<name>-<version>.zip` inside `./releases`.
+The extension `name` can be changed inside `./src/manifest.json`. The `version` is sourced from `./package.json`.
+So to bump a version, run `npm version <patch|minor|major>`, which will increase it in `./package.json`, then run
 `npm run build` to sync that version to the release build.
-Inside your Chrome Web Store Developer Dashboard you can upload this file to publish it to the Chrome Web Store.
-Please follow the steps in [official Google guide](https://developer.chrome.com/docs/webstore) for details.
 
 ## Testing the flow
 
