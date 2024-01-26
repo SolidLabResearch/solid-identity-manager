@@ -3,8 +3,10 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ZipPlugin = require('zip-webpack-plugin');
 const fs = require('fs');
 
-const json = JSON.parse(fs.readFileSync('src/manifest.json', 'utf-8'));
-const name = json.name.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+const manifestJson = JSON.parse(fs.readFileSync('src/manifest.json', 'utf-8'));
+const name = manifestJson.name.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+
+const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
 
 module.exports = {
   entry: {
@@ -24,7 +26,16 @@ module.exports = {
         },
         {
           context: 'src/',
-          from: 'manifest.json'
+          from: 'manifest.json',
+          transform: function (content) {
+            // generates the manifest file using the package.json version
+            return Buffer.from(
+              JSON.stringify({
+                ...JSON.parse(content.toString()),
+                version: packageJson.version,
+              })
+            );
+          },
         },
         {
           context: 'src/',
@@ -34,7 +45,7 @@ module.exports = {
     }),
     new ZipPlugin({
       path: '../releases',
-      filename: `${name}-${json.version}.zip`,
+      filename: `${name}-${packageJson.version}.zip`,
     })
   ],
   mode: 'production'

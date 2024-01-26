@@ -58,7 +58,9 @@ npm run build
 ```
 
 This will generate zip file inside the `./releases` directory called `<name>-<version>.zip`.
-Both the extension `name` and `version` can be changed inside `./src/manifest.json`.
+The extension `name` can be changed inside `./src/manifest.json`. The version is sourced from `./package.json`.
+So to bump a version, run `npm version <patch|minor|major>`, which will increase it in `./package.json`, then run 
+`npm run build` to sync that version to the release build.
 Inside your Chrome Web Store Developer Dashboard you can upload this file to publish it to the Chrome Web Store.
 Please follow the steps in [official Google guide](https://developer.chrome.com/docs/webstore) for details.
 

@@ -1,5 +1,5 @@
 {
-  "name": "solid-auth-extension-chrome",
+  "name": "solid-identity-manager",
   "version": "1.0.1",
   "scripts": {
     "start": "webpack --watch --config webpack.dev.config.js",
