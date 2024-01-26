@@ -280,7 +280,7 @@ test('Profile colors can be changed.', async ({page, popupPage}) => {
       name: 'Save',
     }).click();
   });
-  await page.waitForTimeout(100)
+  await page.waitForTimeout(100);
 
   const mainAvatar = page.locator('#identity-header .avatar');
   const mainAvatarColor = await mainAvatar.evaluate((el) => window.getComputedStyle(el).getPropertyValue('background-color'));

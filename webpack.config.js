@@ -1,6 +1,9 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ZipPlugin = require('zip-webpack-plugin');
+const fs = require('fs');
+
+const json = JSON.parse(fs.readFileSync('src/manifest.json', 'utf-8'));
 
 module.exports = {
   entry: {
@@ -30,7 +33,7 @@ module.exports = {
     }),
     new ZipPlugin({
       path: '../releases',
-      filename: 'solid-identity-manager.zip',
+      filename: `solid-identity-manager-${json.version}.zip`,
     })
   ],
   mode: 'production'
