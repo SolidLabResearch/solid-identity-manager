@@ -58,7 +58,7 @@ npm run build
 ```
 This will generate zip file inside the `./releases` directory called `solid-identity-manager-<version>.zip`.
 Inside your Chrome Web Store Developer Dashboard you can upload this file to publish it to the Chrome Web Store.
-Please follow the steps in [this guide](https://developer.chrome.com/webstore/publish) for details.
+Please follow the steps in [official Google guide](https://developer.chrome.com/docs/webstore) for details.
 
 ## Testing the flow
 
