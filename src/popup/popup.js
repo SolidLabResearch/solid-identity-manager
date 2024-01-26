@@ -120,7 +120,6 @@ const bindProfileDialogEvents = () => {
   const displayName = profileDialog.querySelector('input[name=displayname]');
   const idp = profileDialog.querySelector('input[name=idp]');
   const webID = profileDialog.querySelector('input[name=webid]');
-  const colors = profileDialog.querySelectorAll('input[name=color]');
 
   const displayNameError = profileDialog.querySelector('input[name=displayname] + .error-explanation');
   const webidError = profileDialog.querySelector('input[name=webid] + .error-explanation');
@@ -155,10 +154,6 @@ const bindProfileDialogEvents = () => {
     input.disabled = !!e.target.value.trim().length;
   });
   [idp, webID].forEach(i => i.addEventListener('input', inputListener));
-
-  colors.forEach(
-    (input) => input.addEventListener('change', () => avatar.style.backgroundColor = input.value)
-  );
 
   closeButton.addEventListener('click', () => {
     profileDialog.close();

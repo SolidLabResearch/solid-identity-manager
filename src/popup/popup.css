@@ -278,6 +278,10 @@ button.primary {
   & label:has([value='orange'])::after {
     background: orange;
   }
+
+  & button {
+    display: none;
+  }
 }
 
 input.error {
