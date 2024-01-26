@@ -101,7 +101,7 @@ If you want to run the tests interactively, you use `npm run test:ui`.
 - **Test Steps**:
   - Register a profile.
   - Load main page.
-  - Enter the profile's WebID in the input field.
+  - Enter the profile's WebID in the input field, just like a user would.
   - Log in using profile's credentials.
   - Verify that upon redirect to the main page, the app is authenticated.
 
