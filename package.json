@@ -1,6 +1,6 @@
 {
   "name": "solid-auth-extension-chrome",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "start": "webpack --watch --config webpack.dev.config.js",
     "build": "webpack",
