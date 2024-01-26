@@ -107,7 +107,7 @@ If you want to run the tests interactively, you use `npm run test:ui`.
 
 ### 12. Displays logged in profile's WebID when available
 
-- **Description**: Test if the profile's name is displayed when it's returned from the identity provider
+- **Description**: Test if the WebID's name is displayed when it's returned from the identity provider
 - **Test Steps**:
   - Register a profile.
   - Mock the IDP's response to include a profile name.
