@@ -33,8 +33,6 @@ This will start up the build-process with hot-reload.
 To add the extension to the browser, navigate to `chrome://extensions/` and click `Load unpacked`.
 Navigate and add the `dist/` folder of this project.
 
-To publish the extension to the Chrome Web Store, upload `releases/solid-identity-manager.zip` to the store.
-This zip file is generated upon build `npm run build`.
 
 Hot-reloading replenishes the files every time you save something in `src/`.
 In some cases, mainly when errors occur, you must reload the module in the `chrome://extensions/`.
@@ -51,6 +49,16 @@ yarn start
 Navigate to `http://localhost:5173/`.
 When the extension is present and has identities,
 the option will be shown to continue as the active set profile.
+
+## Publish to Chrome Web Store
+
+To publish the extension to the Chrome Web Store, first build the extension.
+```shell
+npm run build
+```
+This will generate zip file inside the `./releases` directory called `solid-identity-manager-<version>.zip`.
+Inside your Chrome Web Store Developer Dashboard you can upload this file to publish it to the Chrome Web Store.
+Please follow the steps in [this guide](https://developer.chrome.com/webstore/publish) for details.
 
 ## Testing the flow
 
