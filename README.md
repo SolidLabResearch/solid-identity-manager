@@ -49,6 +49,21 @@ Navigate to `http://localhost:5173/`.
 When the extension is present and has identities,
 the option will be shown to continue as the active set profile.
 
+## Publish to Chrome Web Store
+
+To publish the extension to the Chrome Web Store:
+
+1. Build the extension (`npm run build`) to generate a release zip file inside `./releases`.
+2. Upload the zip file to your Chrome Web Store Developer Dashboard 
+(see [official Google guide](https://developer.chrome.com/docs/webstore) for details).
+
+## Release versioning
+
+The build step generates a zip file called `<name>-<version>.zip` inside `./releases`.
+The extension `name` can be changed inside `./src/manifest.json`. The `version` is sourced from `./package.json`.
+So to bump a version, run `npm version <patch|minor|major>`, which will increase it in `./package.json`, then run
+`npm run build` to sync that version to the release build.
+
 ## Testing the flow
 
 In order to full test how this extension works end-to-end, you must take the following steps:
