@@ -37,10 +37,15 @@ fieldset {
 input {
   display: block;
   width: 100%;
-  padding: 12px 18px;
-  border: none;
-  background-color: #eee;
-  border-radius: 24px;
+  font-size: .875rem;
+  line-height: 1.5rem;
+  padding-top: calc(0.375rem - 1px);
+  padding-bottom: calc(0.375rem - 1px);
+  padding-left: calc(0.75rem - 1px);
+  padding-right: calc(0.75rem - 1px);
+  background-color: transparent;
+  border: 1px solid rgba(9,9,11,.1);
+  border-radius: 0.5rem;
   box-sizing: border-box;
 }
 
