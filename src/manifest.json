@@ -1,12 +1,15 @@
 {
   "manifest_version": 3,
 
-  "name": "Solid Identity Extension",
+  "name": "Solid Identity Manager",
   "description": "Manage and switch between your Solid identities",
   "version": "1.0",
 
   "icons": {
-    "48": "solid-48.png"
+    "16": "id-badge-16.png",
+    "32": "id-badge-32.png",
+    "48": "id-badge-48.png",
+    "128": "id-badge-128.png"
   },
 
   "permissions": [
