@@ -112,7 +112,7 @@ If you want to run the tests interactively, you use `npm run test:ui`.
   - Register a profile.
   - Mock the IDP's response to include a profile name.
   - Load main page.
-  - Enter the profile's WebID in the input field.
+  - Enter the profile's WebID in the input field, just like a user would.
   - Log in using profile's credentials.
   - Verify that upon redirect to the main page displays the profile's name.
 
