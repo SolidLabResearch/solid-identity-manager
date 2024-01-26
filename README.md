@@ -57,7 +57,8 @@ To publish the extension to the Chrome Web Store, first build the extension.
 npm run build
 ```
 
-This will generate zip file inside the `./releases` directory called `solid-identity-manager-<version>.zip`.
+This will generate zip file inside the `./releases` directory called `<name>-<version>.zip`.
+Both the extension `name` and `version` can be changed inside `./src/manifest.json`.
 Inside your Chrome Web Store Developer Dashboard you can upload this file to publish it to the Chrome Web Store.
 Please follow the steps in [official Google guide](https://developer.chrome.com/docs/webstore) for details.
 
