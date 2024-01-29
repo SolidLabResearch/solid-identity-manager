@@ -53,7 +53,7 @@ test('add new profile page has all necessary input fields', async ({ page, popup
   const displayNamePlaceholder = await displayName.getAttribute('placeholder');
   expect(displayNamePlaceholder).toEqual('The name in the list');
 
-  const idp = page.getByRole('textbox', {name: 'idp'});
+  const idp = page.getByRole('textbox', {name: 'identity provider'});
   await expect(idp).toBeVisible();
   await expect(idp).toBeEditable();
   await expect(idp).toBeEmpty();
@@ -71,7 +71,7 @@ test('add new profile page has all necessary input fields', async ({ page, popup
 test('when create a profile, IDP and WebID fields are mutually exclusive', async ({ page, popupPage}) => {
   await popupPage.openNewProfile();
 
-  const idp = page.getByRole('textbox', {name: 'idp'});
+  const idp = page.getByRole('textbox', {name: 'identity provider'});
   await expect(idp).toBeEditable();
 
   const webid = page.getByRole('textbox', {name: 'webid'});
