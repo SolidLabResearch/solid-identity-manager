@@ -240,6 +240,8 @@ test('Displays logged in profile\'s name if available', async ({mainPage, contex
   await mainPage.register();
 
   await mainPage.loadPage();
+  await expect(mainPage.getPage().locator('#no-extension-warning')).toBeHidden();
+
   await mainPage.getPage().locator('input[name="identity"]').fill(WEBID);
 
   await mainPage.page.getByRole('button', {name: /log in/i}).click();
@@ -254,5 +256,5 @@ test('Displays logged in profile\'s name if available', async ({mainPage, contex
 
 baseTest('Displays info message if the extension is not installed', async ({page}) => {
   await page.goto('http://localhost:5173');
-  await expect(page.locator('#no-extension-warning')).toHaveText("Solid Identity Extension is not installed.");
+  await expect(page.locator('#no-extension-warning')).toHaveText("Solid Identity Manager is not installed.");
 });

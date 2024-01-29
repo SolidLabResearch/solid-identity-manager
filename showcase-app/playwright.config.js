@@ -12,7 +12,7 @@ module.exports = defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'yarn run start',
+    command: 'npm run start',
     url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
     stdout: 'ignore',
