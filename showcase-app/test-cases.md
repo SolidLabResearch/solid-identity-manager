@@ -110,7 +110,7 @@ If you want to run the tests interactively, you use `npm run test:ui`.
 - **Description**: Test if the WebID's name is displayed when it's returned from the identity provider.
 - **Test Steps**:
   - Register a profile.
-  - Mock the IDP's response to include a WebID's name.
+  - Mock the WebID's response to include a name.
   - Load main page with extension.
   - Assert the extension is installed.
   - Enter the profile's WebID in the input field, just like a user would.
