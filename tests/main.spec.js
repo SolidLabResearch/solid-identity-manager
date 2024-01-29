@@ -58,7 +58,7 @@ test('add new profile page has all necessary input fields', async ({ page, popup
   await expect(idp).toBeEditable();
   await expect(idp).toBeEmpty();
   const idpPlaceholder = await idp.getAttribute('placeholder');
-  expect(idpPlaceholder).toEqual('Solid identity provider');
+  expect(idpPlaceholder).toEqual('Your identity provider');
 
   const webid = page.getByRole('textbox', {name: 'webid'});
   await expect(webid).toBeVisible();
@@ -177,7 +177,7 @@ test('Clicking the settings button next to a profile opens the edit profile dial
 
   await expect(popupPage.page.getByRole('heading', {name: /Edit Profile/})).toBeVisible();
   await expect(popupPage.page.getByPlaceholder('The name in the list')).toHaveValue('A Profile');
-  await expect(popupPage.page.getByPlaceholder('Solid identity provider')).toHaveValue('IDP A');
+  await expect(popupPage.page.getByPlaceholder('Your identity provider')).toHaveValue('IDP A');
   await expect(popupPage.page.getByPlaceholder('Your WebID')).toHaveValue('');
 });
 
