@@ -7,6 +7,7 @@ it will store to persist over the course of its use.
 A profile describes either a WebID or an IDP.
 
 ![alt text](./screenshots/create-profile.png)
+![alt text](./screenshots/profile.png)
 
 Subsequently, the profile gets a display name and
 a color to generate an avatar used to distinguish between other profiles.
