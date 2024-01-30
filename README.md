@@ -5,10 +5,15 @@ make it easy for the user to switch between their WebIDs.
 The way this works is by giving the user the option to add _profiles_ to the extension which
 it will store to persist over the course of its use.
 A profile describes either a WebID or an IDP.
+
+![alt text](./screenshots/create-profile.png)
+
 Subsequently, the profile gets a display name and
 a color to generate an avatar used to distinguish between other profiles.
 Profiles will be listed when clicking on the extension, and
 an active profile is shown in the top.
+
+![alt text](./screenshots/popup.png)
 
 The extension provides an API to a Solid app either through the use of `chrome.runtime.connect` with the extension ID, or
 by using a plugin provided by us as an NPM package to make interfacing with the extension. (TODO)
@@ -20,7 +25,7 @@ due to security concerns, this was not desirable.
 
 ## Quickstart
 
-The extension was developed using `node:lts/hydrogen`.
+The extension was developed using `node` version 18.
 You can use `nvm` to synchronise this for local development.
 
 ```shell
