@@ -212,7 +212,7 @@ test('Displays logged in profile\'s WebID', async ({mainPage}) => {
   await expect(mainPage.getPage().locator('#webid')).toHaveText(WEBID);
 });
 
-test('Displays logged in profile\'s name if available', async ({mainPage, context}) => {
+test('Displays logged in profile\'s WebID name if available', async ({mainPage, context}) => {
   const WEBID_ENDPOINT = `https://pod.playground.solidlab.be/${mainPage.randomPodname}/profile/card`;
   const WEBID = `${WEBID_ENDPOINT}#me`;
   const SOME_NAME = 'SOME_NAME';
@@ -253,6 +253,49 @@ test('Displays logged in profile\'s name if available', async ({mainPage, contex
   await expect(mainPage.getPage().locator('#name')).toHaveText(SOME_NAME);
 });
 
+
+test('Displays logged in profile\'s WebID name in the first available locale if name is given in multiple locales', async ({mainPage, context}) => {
+  const WEBID_ENDPOINT = `https://pod.playground.solidlab.be/${mainPage.randomPodname}/profile/card`;
+  const WEBID = `${WEBID_ENDPOINT}#me`;
+  const SOME_NAME_EN = 'SOME_NAME_EN';
+  const SOME_NAME_FR = 'SOME_NAME_FR';
+
+  const RESPONSE = `@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+  @prefix solid: <http://www.w3.org/ns/solid/terms#>.
+  @prefix TEST: <http://schema.org/>.
+  
+  <>
+      a foaf:PersonalProfileDocument;
+      foaf:maker <https://pod.playground.solidlab.be/${mainPage.randomPodname}/profile/card#me>;
+      foaf:primaryTopic <https://pod.playground.solidlab.be/${mainPage.randomPodname}/profile/card#me>.
+  
+  <https://pod.playground.solidlab.be/${mainPage.randomPodname}/profile/card#me>
+      
+      solid:oidcIssuer <https://pod.playground.solidlab.be/>;
+      TEST:name "${SOME_NAME_EN}"@en ;
+      TEST:name "${SOME_NAME_FR}"@fr ;
+      a foaf:Person.
+  `;
+
+  await context.route(WEBID_ENDPOINT, async route => {
+    await route.fulfill({ contentType: 'text/turtle', body: RESPONSE });
+  });
+
+  await mainPage.register();
+
+  await mainPage.loadPage();
+  await expect(mainPage.getPage().locator('#no-extension-warning')).toBeHidden();
+
+  await mainPage.getPage().locator('input[name="identity"]').fill(WEBID);
+
+  await mainPage.page.getByRole('button', {name: /log in/i}).click();
+  await mainPage.login();
+
+  await mainPage.page.waitForTimeout(1000);
+
+  await expect(mainPage.getPage().locator('#webid')).toHaveText(WEBID);
+  await expect(mainPage.getPage().locator('#name')).toHaveText(SOME_NAME_EN);
+});
 
 baseTest('Displays info message if the extension is not installed', async ({page}) => {
   await page.goto('http://localhost:5173');

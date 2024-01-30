@@ -1,5 +1,5 @@
 import {fetch, getDefaultSession, handleIncomingRedirect, login,} from '@inrupt/solid-client-authn-browser';
-import {getSolidDataset, getStringNoLocale, getThing,} from '@inrupt/solid-client';
+import {getSolidDataset, getStringByLocaleAll, getStringNoLocale, getThing,} from '@inrupt/solid-client';
 import {SCHEMA_INRUPT} from '@inrupt/vocab-common-rdf';
 import IdentityPlugin from './plugin/identity-plugin';
 import {QueryEngine} from '@comunica/query-sparql';
@@ -65,6 +65,26 @@ const main = async () => {
   }
 };
 
+/**
+ * This function returns the name from the Solid dataset.
+ * If multiple names are available, the first one is returned.
+ * @param {object} solidDataSet - The Solid dataset.
+ * @param {string} webId - The WebID.
+ * @returns {string} - The WebID's name or null.
+ */
+const getName = (solidDataSet, webId) => {
+  const thing = getThing(solidDataSet, webId);
+
+  // first check if there is a name without locale
+  const name = getStringNoLocale(thing, SCHEMA_INRUPT.name);
+  if (name) {
+    return name
+  }
+  // otherwise return the name for the first locale if any
+  const names = getStringByLocaleAll(thing, SCHEMA_INRUPT.name);
+  return names.values().next().value?.[0] ?? null
+}
+
 // Invalidates the application - purely checks whether logged in or not and updates app state based on that
 const updateState = async () => {
   const noExtensionWarning = document.querySelector("#no-extension-warning")
@@ -89,12 +109,7 @@ const updateState = async () => {
 
     // Getting dataset from a specific WebID (the one that was logged in with)
     const myDataset = await getSolidDataset(session.info.webId, { fetch });
-
-    // Getting contents at /me from the current pod
-    const me = getThing(myDataset, session.info.webId);
-
-    // Getting the name from the vcard if exists
-    const name = getStringNoLocale(me, SCHEMA_INRUPT.name);
+    const name = getName(myDataset, session.info.webId);
 
     if (name) {
       document.querySelector('dl:has(#name)').classList.remove('hidden');

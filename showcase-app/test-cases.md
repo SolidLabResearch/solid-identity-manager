@@ -105,7 +105,7 @@ If you want to run the tests interactively, you use `npm run test:ui`.
   - Log in using profile's credentials.
   - Verify that upon redirect to the main page, the app is authenticated.
 
-### 12. Displays logged in profile's WebID when available
+### 12. Displays logged in profile's WebID name when available
 
 - **Description**: Test if the WebID's name is displayed.
 - **Test Steps**:
@@ -117,7 +117,19 @@ If you want to run the tests interactively, you use `npm run test:ui`.
   - Log in using profile's credentials.
   - Verify that upon redirect to the main page displays the WebID's name.
 
-### 13. Displays info message if the extension is not installed
+### 13. Displays logged in profile's WebID name in the first available locale if name is given in multiple locales
+
+- **Description**: Test if the WebID's name is displayed.
+- **Test Steps**:
+  - Register a profile.
+  - Mock the WebID's response to include name for multiple locales.
+  - Load main page with extension.
+  - Assert the extension is installed.
+  - Enter the profile's WebID in the input field, just like a user would.
+  - Log in using profile's credentials.
+  - Verify that upon redirect to the main page displays the WebID's name for the first locale.
+
+### 14. Displays info message if the extension is not installed
 
 - **Description**: Test if a connection can be established with the extension, showing a warning if unsuccessful.
 - **Test Steps**:
