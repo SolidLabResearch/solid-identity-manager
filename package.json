@@ -13,7 +13,8 @@
     "lint:js": "eslint . --ext js --report-unused-disable-directives --max-warnings 0",
     "lint:js:fix": "eslint . --ext js --report-unused-disable-directives --max-warnings 0 --fix"
   },
-  "author": "rafael-mindreau",
+  "author": "Serge Van de Wyer",
+  "contributors": ["Pieter Heyvaert (https://pieterheyvaert.com/#me)"],
   "private": "true",
   "license": "MIT",
   "devDependencies": {
