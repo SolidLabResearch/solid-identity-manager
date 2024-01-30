@@ -41,8 +41,8 @@ Use the `showcase-app` if you want to try out an example Solid app to test this 
 
 ```shell
 cd `./showcase-app`
-yarn install
-yarn start
+npm install
+npm start
 ```
 
 Navigate to `http://localhost:5173/`.
