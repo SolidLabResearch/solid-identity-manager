@@ -54,17 +54,14 @@ export class PopupPage {
   }
 
   /**
-   * Opens the settings page by clicking on the settings icon button on the popup page.
-   * @returns {Promise<*>} Returns a promise of the settings page.
+   * Opens the edit profile dialog for the given profile name.
+   * @param {string} name - The profile name.
    */
-  async openSettings() {
-    const pagePromise = this.context.waitForEvent('page');
-
-    await this.settingsButton.click();
-
-    const popup = await pagePromise;
-    await popup.waitForLoadState();
-    return popup;
+  async openEditProfileDialog(name) {
+    const rowLocator = this.page.getByRole('listitem');
+    const listItem = rowLocator.filter({hasText: name});
+    const settingButton = listItem.locator('.edit-button');
+    await settingButton.click();
   }
 
   /**

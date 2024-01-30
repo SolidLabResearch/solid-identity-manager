@@ -1,4 +1,5 @@
 import {expect, test} from './fixtures';
+import { test as baseTest } from '@playwright/test';
 
 test('Page has title and headlines', async ({page}) => {
   await page.goto('http://localhost:5173');
@@ -35,51 +36,43 @@ test('Switching extension profiles activates the correct profile in the app', as
   await expect(mainPage.getPage().getByRole('button', {name: /Continue as Test Profile B/})).toBeVisible();
 });
 
-// skipping this test for now, will update once the new edit profile dialog is merged https://github.com/SolidLabResearch/solid-identity-manager/pull/18
-test.skip('Removing profile inside the extension deactivates the profile inside the app.', async ({page, mainPage, popupPage}) => {
-  await test.step('Create profile A', async () => {
-    await popupPage.openPopup();
-    await popupPage.createProfile('Test Profile A', 'Test IPD A');
+test('Removing profile inside the extension deactivates the profile inside the app.', async ({page, mainPage, popupPage}) => {
+  await test.step('Create a profile', async () => {
+    await popupPage.createProfile('A Profile', 'WebId A');
+    const identities = page.locator('section#identities');
+    await expect(identities).toBeVisible();
+
+    await expect(identities.getByRole('list')).not.toBeEmpty();
+    await expect(identities.locator('.identity-row')).toHaveText('A' + 'A Profile',);
   });
 
-  await test.step('Assert app shows profile A', async () => {
+  await test.step('Assert app shows created profile', async () => {
     await mainPage.loadPage();
-    await expect(mainPage.getPage().getByRole('button', {name: /Continue as Test Profile A/})).toBeVisible();
+    await expect(mainPage.getPage().getByRole('button', {name: /Continue as A Profile/})).toBeVisible();
   });
 
   await test.step('Remove profile A in extension', async () => {
-    await popupPage.openPopup();
-    const settingsPage = await popupPage.openSettings();
+    await popupPage.openEditProfileDialog('A Profile');
 
-    await settingsPage.getByRole('button', {
-      name: 'Test Profile A',
-    }).click();
-    await settingsPage.getByRole('button', {
+    await popupPage.page.getByRole('button', {
       name: 'Delete',
     }).click();
 
-    await settingsPage.getByRole('button', {
+    await popupPage.page.getByRole('button', {
       name: 'Yes',
     }).click();
 
-    const confirmDialog = settingsPage.locator('#confirm-dialog');
+    const confirmDialog = popupPage.page.locator('#confirm-dialog');
     await expect(confirmDialog).toBeHidden();
 
-    // profile was removed from settings page
-    await expect(settingsPage.getByRole('button', {
-      name: 'Test Profile A',
-    })).toHaveCount(0);
-
-    await page.reload();
+    const identities = page.locator('section#identities');
+    await expect(identities.getByRole('list')).toBeEmpty();
+    await expect(page.getByRole('heading', {name: 'Test Profile A'})).toBeHidden();
   });
 
-  const identities = page.locator('section#identities');
-  await expect(identities.getByRole('list')).toBeEmpty();
-  await expect(page.getByRole('heading', {name: 'Test Profile A'})).toBeHidden();
-
-  await test.step('Assert app does not show profile A', async () => {
+  await test.step('Assert app does not show profile', async () => {
     await mainPage.loadPage();
-    await expect(mainPage.getPage().getByRole('button', {name: /Continue as Test Profile A/})).toBeHidden();
+    await expect(mainPage.getPage().getByRole('button', {name: /Continue as A Profile/})).toBeHidden();
   });
 
 });
@@ -185,4 +178,126 @@ test('Log out', async ({mainPage, popupPage}) => {
 
   await mainPage.page.getByRole('button', {name: 'Log out'}).click();
   await expect(mainPage.getPage().getByRole('heading', {name: 'Logged In!'})).toBeHidden();
+});
+
+test('Login without extension using WebID', async ({mainPage}) => {
+  await mainPage.loadPage();
+  await mainPage.register();
+
+  await mainPage.loadPage();
+  await mainPage.getPage().waitForTimeout(1000);
+  await mainPage.getPage().locator('input[name="identity"]').fill(`https://pod.playground.solidlab.be/${mainPage.randomPodname}/profile/card#me`);
+
+  await mainPage.page.getByRole('button', {name: /log in/i}).click();
+  await mainPage.login();
+
+  await mainPage.page.waitForTimeout(1000);
+  await expect(mainPage.getPage().getByRole('heading', {name: 'Logged In!'})).toBeVisible();
+});
+
+test('Displays logged in profile\'s WebID', async ({mainPage}) => {
+  const WEBID = `https://pod.playground.solidlab.be/${mainPage.randomPodname}/profile/card#me`;
+
+  await mainPage.register();
+
+  await mainPage.loadPage();
+  await mainPage.getPage().locator('input[name="identity"]').fill(WEBID);
+
+  await mainPage.page.getByRole('button', {name: /log in/i}).click();
+  await mainPage.login();
+
+  await mainPage.page.waitForTimeout(1000);
+  await expect(mainPage.getPage().getByRole('heading', {name: 'Logged In!'})).toBeVisible();
+
+  await expect(mainPage.getPage().locator('#webid')).toHaveText(WEBID);
+});
+
+test('Displays logged in profile\'s WebID name if available', async ({mainPage, context}) => {
+  const WEBID_ENDPOINT = `https://pod.playground.solidlab.be/${mainPage.randomPodname}/profile/card`;
+  const WEBID = `${WEBID_ENDPOINT}#me`;
+  const SOME_NAME = 'SOME_NAME';
+
+  const RESPONSE = `@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+  @prefix solid: <http://www.w3.org/ns/solid/terms#>.
+  @prefix TEST: <http://schema.org/>.
+  
+  <>
+      a foaf:PersonalProfileDocument;
+      foaf:maker <https://pod.playground.solidlab.be/${mainPage.randomPodname}/profile/card#me>;
+      foaf:primaryTopic <https://pod.playground.solidlab.be/${mainPage.randomPodname}/profile/card#me>.
+  
+  <https://pod.playground.solidlab.be/${mainPage.randomPodname}/profile/card#me>
+      
+      solid:oidcIssuer <https://pod.playground.solidlab.be/>;
+      TEST:name "${SOME_NAME}" ;
+      a foaf:Person.
+  `;
+
+  await context.route(WEBID_ENDPOINT, async route => {
+    await route.fulfill({ contentType: 'text/turtle', body: RESPONSE });
+  });
+
+  await mainPage.register();
+
+  await mainPage.loadPage();
+  await expect(mainPage.getPage().locator('#no-extension-warning')).toBeHidden();
+
+  await mainPage.getPage().locator('input[name="identity"]').fill(WEBID);
+
+  await mainPage.page.getByRole('button', {name: /log in/i}).click();
+  await mainPage.login();
+
+  await mainPage.page.waitForTimeout(1000);
+
+  await expect(mainPage.getPage().locator('#webid')).toHaveText(WEBID);
+  await expect(mainPage.getPage().locator('#name')).toHaveText(SOME_NAME);
+});
+
+
+test('Displays logged in profile\'s WebID name in the first available locale if name is given in multiple locales', async ({mainPage, context}) => {
+  const WEBID_ENDPOINT = `https://pod.playground.solidlab.be/${mainPage.randomPodname}/profile/card`;
+  const WEBID = `${WEBID_ENDPOINT}#me`;
+  const SOME_NAME_EN = 'SOME_NAME_EN';
+  const SOME_NAME_FR = 'SOME_NAME_FR';
+
+  const RESPONSE = `@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+  @prefix solid: <http://www.w3.org/ns/solid/terms#>.
+  @prefix TEST: <http://schema.org/>.
+  
+  <>
+      a foaf:PersonalProfileDocument;
+      foaf:maker <https://pod.playground.solidlab.be/${mainPage.randomPodname}/profile/card#me>;
+      foaf:primaryTopic <https://pod.playground.solidlab.be/${mainPage.randomPodname}/profile/card#me>.
+  
+  <https://pod.playground.solidlab.be/${mainPage.randomPodname}/profile/card#me>
+      
+      solid:oidcIssuer <https://pod.playground.solidlab.be/>;
+      TEST:name "${SOME_NAME_EN}"@en ;
+      TEST:name "${SOME_NAME_FR}"@fr ;
+      a foaf:Person.
+  `;
+
+  await context.route(WEBID_ENDPOINT, async route => {
+    await route.fulfill({ contentType: 'text/turtle', body: RESPONSE });
+  });
+
+  await mainPage.register();
+
+  await mainPage.loadPage();
+  await expect(mainPage.getPage().locator('#no-extension-warning')).toBeHidden();
+
+  await mainPage.getPage().locator('input[name="identity"]').fill(WEBID);
+
+  await mainPage.page.getByRole('button', {name: /log in/i}).click();
+  await mainPage.login();
+
+  await mainPage.page.waitForTimeout(1000);
+
+  await expect(mainPage.getPage().locator('#webid')).toHaveText(WEBID);
+  await expect(mainPage.getPage().locator('#name')).toHaveText(SOME_NAME_EN);
+});
+
+baseTest('Displays info message if the extension is not installed', async ({page}) => {
+  await page.goto('http://localhost:5173');
+  await expect(page.locator('#no-extension-warning')).toHaveText("Solid Identity Manager is not installed.");
 });

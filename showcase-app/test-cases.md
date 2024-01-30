@@ -71,7 +71,7 @@ If you want to run the tests interactively, you use `npm run test:ui`.
 
 ### 8. When an active profile is authenticated, the app displays a message that the user is logged in
 
-- **Description**: Tests if the authenticated state is correctly displayed
+- **Description**: Tests if the authenticated state is correctly displayed.
 - **Test Steps**:
   - Set up a profile with an active session.
   - Mock the response from the auth server to return an authenticated session.
@@ -94,4 +94,45 @@ If you want to run the tests interactively, you use `npm run test:ui`.
   - Set up a profile with an active session.
   - Reload the page.
   - Verify that the active profile is still displayed.
+
+### 11. Login without extension using WebID
+
+- **Description**: Test the login flow using a WebID input field.
+- **Test Steps**:
+  - Register a profile.
+  - Load main page.
+  - Enter the profile's WebID in the input field, just like a user would.
+  - Log in using profile's credentials.
+  - Verify that upon redirect to the main page, the app is authenticated.
+
+### 12. Displays logged in profile's WebID name when available
+
+- **Description**: Test if the WebID's name is displayed.
+- **Test Steps**:
+  - Register a profile.
+  - Mock the WebID's response to include a name.
+  - Load main page with extension.
+  - Assert the extension is installed.
+  - Enter the profile's WebID in the input field, just like a user would.
+  - Log in using profile's credentials.
+  - Verify that upon redirect to the main page displays the WebID's name.
+
+### 13. Displays logged in profile's WebID name in the first available locale if name is given in multiple locales
+
+- **Description**: Test if the WebID's name is displayed.
+- **Test Steps**:
+  - Register a profile.
+  - Mock the WebID's response to include name for multiple locales.
+  - Load main page with extension.
+  - Assert the extension is installed.
+  - Enter the profile's WebID in the input field, just like a user would.
+  - Log in using profile's credentials.
+  - Verify that upon redirect to the main page displays the WebID's name for the first locale.
+
+### 14. Displays info message if the extension is not installed
+
+- **Description**: Test if a connection can be established with the extension, showing a warning if unsuccessful.
+- **Test Steps**:
+  - Start the app without the extension installed.
+  - Verify that the app displays a warning message.
 

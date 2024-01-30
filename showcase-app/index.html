@@ -3,11 +3,49 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/solid-48.png" />
+    <link rel="stylesheet" href="reset.css"/>
+    <link rel="stylesheet" href="style.css"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Solid Auth Showcase</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+        <div id="login-card" class="card hidden">
+            <h1>Cool<br />Solid<br />App</h1>
+            <h2>Log in with your Solid Identity</h2>
+            <form id="login-form">
+                <fieldset>
+                    <label for="identity">Identity</label>
+                    <input type="url" name='identity' id='identity' placeholder="WebID or IDP (INOP)" required/>
+                    <p class="error hidden" id="error-identity">Unable to retrieve identity provider</p>
+                </fieldset>
+                <button type="submit">Log in</button>
+            </form>
+            <div id="no-extension-warning" class="hidden">Solid Identity Manager is <strong>not installed</strong>.</div>
+            <section id="one-click-login" class="hidden">
+                <hr />
+                <button class="oidc-login-button" id="login-with-extension">
+                    <img src="/solid-48.png" alt="solid logo" width="24"/>
+                    <span id="login-with-extension-text"></span>
+                </button>
+            </section>
+        </div>
+
+        <div id="app-card" class="card hidden">
+            <h2>Logged in!</h2>
+            <dl>
+                <dt>WebID</dt>
+                <dd id="webid"></dd>
+            </dl>
+            <dl>
+                <dt>Name</dt>
+                <dd id="name"></dd>
+            </dl>
+
+            <button id="logout-button">Log out</button>
+        </div>
+
+    </div>
     <script type="module" src="main.js"></script>
   </body>
 </html>
