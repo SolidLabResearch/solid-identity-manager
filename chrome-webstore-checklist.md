@@ -1,19 +1,27 @@
 # Chrome Web Store publication checklist
 
-## Permission justification
+## [Privacy](https://developer.chrome.com/docs/webstore/cws-dashboard-privacy)
 
-To access most extension APIs and features, you must declare permissions in your extension's manifest. 
+### Single purpose
+
+Easily manage and switch between your Solid identities when using Solid apps.
+
+### Permissions justification
+
+To access most extension APIs and features, you must declare permissions in your extension's manifest.
 Some permissions trigger warnings that users must allow to continue using the extension.
 
 Requested permissions:
-1. **activeTab**
-   
-    justification: to allow access to the currently active tab when the user invokes the extension. 
-2. **storage**:
+- activeTab: to allow access to the currently active tab when the user invokes the extension.
+- storage: to be able to store user settings across sessions and browsers.
+- host_permissions: any website should be able to communicate with the extension.
 
-    justification: to be able to store user settings across sessions and browsers.
-3. **host_permissions**
+### Data usage
 
-    justification: any website should be able to communicate with the extension.
+> Use the first group of checkboxes to disclose which types of data your extension collects.
 
+We don't collect any data.
 
+> Use the second group of checkboxes to certify that you comply with each of the disclosure statements.
+
+Check all the boxes, because we don't do any of these things.
