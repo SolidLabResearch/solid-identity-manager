@@ -1,4 +1,4 @@
-# Solid Identity Extension
+# Solid Identity Manager
 
 This Chrome extension currently acts as a remote control to **manage your Solid identities** and
 make it easy for the user to switch between their WebIDs.
