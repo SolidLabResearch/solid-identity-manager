@@ -20,7 +20,7 @@ Requested permissions:
 
 > Use the first group of checkboxes to disclose which types of data your extension collects.
 
-We don't collect any data.
+Don't check any of the boxes, because we don't collect any data.
 
 > Use the second group of checkboxes to certify that you comply with each of the disclosure statements.
 
