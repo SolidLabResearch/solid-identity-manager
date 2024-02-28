@@ -30,7 +30,7 @@
 
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Solid Authentication"
+    "default_title": "Solid Identity Manager"
   },
 
   "background": {
