@@ -24,6 +24,8 @@ the extension **only provides a way of keeping track of profiles**.
 Previous versions of this extension intercepted or modified network requests, and
 due to security concerns, this was not desirable.
 
+You find a screencast [here](https://cloud.ilabt.imec.be/index.php/s/9C63HqJmZiJj4e5).
+
 ## Quickstart
 
 The extension was developed using `node` version 18.
