@@ -3,7 +3,7 @@
 
   "name": "Solid Identity Manager",
   "description": "Manage and switch between your Solid identities",
-  "version": "1.0",
+  "version": "0.1.0",
 
   "icons": {
     "16": "id-badge-16.png",
