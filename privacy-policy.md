@@ -9,7 +9,7 @@ we advise you to frequently visit this page.
 
 ## What user data we collect
 
-We do not collect any user data.
+We do not collect, or otherwise process in any way, any user data.
 
 ## Integration with Solid applications
 
