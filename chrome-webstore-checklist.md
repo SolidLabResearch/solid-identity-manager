@@ -12,6 +12,7 @@ To access most extension APIs and features, you must declare permissions in your
 Some permissions trigger warnings that users must allow to continue using the extension.
 
 Requested permissions:
+
 - activeTab: to allow access to the currently active tab when the user invokes the extension.
 - storage: to be able to store user settings across sessions and browsers.
 - host_permissions: any website should be able to communicate with the extension.

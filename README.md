@@ -1,35 +1,29 @@
 # Solid Identity Manager
 
-This Chrome extension currently acts as a remote control to **manage your Solid identities** and
-make it easy for the user to switch between their WebIDs.
-The way this works is by giving the user the option to add _profiles_ to the extension which
+This Chrome extension acts as a remote control to manage your Solid identities and
+make it easy for users to switch between their WebIDs or IDPs.
+The way this works is by giving users the option to add profiles to the extension which
 it will store to persist over the course of its use.
-A profile describes either a WebID or an IDP.
 
 ![alt text](./screenshots/create-profile.png)
 ![alt text](./screenshots/profile.png)
 
-Subsequently, the profile gets a display name and
-a color to generate an avatar used to distinguish between other profiles.
-Profiles will be listed when clicking on the extension, and
-an active profile is shown in the top.
+The profile has a name and
+a color to distinguish it from other profiles.
+The extension lists all profiles when clicking on the extension's icon.
 
 ![alt text](./screenshots/popup.png)
 
-The extension provides an API to a Solid app either through the use of `chrome.runtime.connect` with the extension ID, or
-by using a plugin provided by us as an NPM package to make interfacing with the extension. (TODO)
-A draft of how this package would work can be found in `./showcase-app/plugin/`.
-The idea is for the **Solid app (not part of the extension) to manage the authentication**, and
-the extension **only provides a way of keeping track of profiles**.
-Previous versions of this extension intercepted or modified network requests, and
-due to security concerns, this was not desirable.
+The extension provides an API to a Solid app through the use of `chrome.runtime.connect`.
+You find an example in `showcase-app/plugin`.
+The idea is for the Solid app to manage the authentication itself, and
+the extension only provides a way of keeping track of Solid identities.
 
 You find a screencast [here](https://cloud.ilabt.imec.be/index.php/s/9C63HqJmZiJj4e5).
 
 ## Quickstart
 
-The extension was developed using `node` version 18.
-You can use `nvm` to synchronise this for local development.
+We developed this extension using Node v18.
 
 ```shell
 npm i
@@ -41,7 +35,7 @@ This will start up the build-process with hot-reload.
 To add the extension to the browser, navigate to `chrome://extensions/` and click `Load unpacked`.
 Navigate and add the `dist/` folder of this project.
 
-Hot-reloading replenishes the files every time you save something in `src/`.
+Hot-reloading replenishes the files every time you save something in `src`.
 In some cases, mainly when errors occur, you must reload the module in the `chrome://extensions/`.
 It should not be removed. You may pin the extension for convenience.
 
@@ -57,20 +51,32 @@ Navigate to `http://localhost:5173/`.
 When the extension is present and has identities,
 the option will be shown to continue as the active set profile.
 
+## Building
+
+You create a build via
+
+```shell
+npm run build
+```
+
+This script generates a zip file  called `<name>-<version>.zip` inside `./releases`.
+You can change the name of the extension `name` in `./src/manifest.json`.
+The `version` is sourced from `./package.json`.
+To bump a version, run `npm version <patch|minor|major>`, which will increase it in `./package.json`, then run
+`npm run build` to sync that version to the release build.
+
 ## Publish to Chrome Web Store
 
-To publish the extension to the Chrome Web Store:
+You publish the extension to the Chrome Web Store via the following steps:
 
-1. Build the extension (`npm run build`) to generate a release zip file inside `./releases`.
-2. Upload the zip file to your Chrome Web Store Developer Dashboard 
+1. Build the extension to generate a release zip file inside `./releases` via
+
+   ```shell
+   npm run build
+   ```
+
+2. Upload the zip file to your Chrome Web Store Developer Dashboard
 (see [official Google guide](https://developer.chrome.com/docs/webstore) for details).
-
-## Release versioning
-
-The build step generates a zip file called `<name>-<version>.zip` inside `./releases`.
-The extension `name` can be changed inside `./src/manifest.json`. The `version` is sourced from `./package.json`.
-So to bump a version, run `npm version <patch|minor|major>`, which will increase it in `./package.json`, then run
-`npm run build` to sync that version to the release build.
 
 ## Testing the flow
 
@@ -97,7 +103,7 @@ you will be automatically logged out.
 You can create temporary WebIDs using `https://pod.playground.solidlab.be/idp/register/`.
 When creating a new profile you may add `https://pod.playground.solidlab.be` as the IDP, or
 the WebID you've obtained after registration.
-These are reset daily, so make sure you've recreated it in order for authorization to work.
+These are reset daily, so make sure you've recreated it for authorization to work.
 
 ```mermaid
 sequenceDiagram
@@ -130,62 +136,6 @@ sequenceDiagram
     app1 ->> app1: Log out Profile A
     app1 ->> app1: Show button to log in with Profile B
 ```
-
-## Future work and ideas
-
-Currently the extension acts as a remote control for managing profiles.
-It can set an active identity, manage existing profiles and modify/delete them.
-Profiles simply contain either an IDP or WebID, with an additional display name and color label.
-Solid Apps can then get this profile data to effectively log in using these credentials.
-There are some limitations in this setup.
-We might have to change the way this extension works in order to cater to the needs of its users.
-
-### Distinct profiles per tab
-
-Different solid apps in different parallel tabs might want to use different profiles.
-The current logic of having an active profile implies that every app will use the same identity,
-which is not necessarily desired behaviour.
-
-### Multiple options
-
-To allow the above condition to be satisfied,
-the showcase app in this bundle should allow the user to select which of the stored profiles
-they want to use for this specific app in this specific tab.
-It's more desirable to have list of available profiles to continue with.
-
-### Session persistence where possible
-
-It's very difficult to let the extension handle login/authorisation for the solid application for security reasons.
-Technically this is also challenging because the environment the extension runs in is neither pure Browser nor NodeJS,
-making usage of the existing inrupt package difficult and non-standard.
-Storing sessions between page refreshes in separate tabs/apps would therefore
-ideally be a concern for the solid app and not the extension.
-The way the current setup makes this easier,
-is by providing an intermediate layer in the form of a package developers can use.
-
-### Ease of access
-
-Ideally the extension solves the problem of convenience.
-Having to enter WebIDs again and again everywhere,
-especially when developing and testing out different cases with distinct WebIDs & pods.
-It is convenient if you can just click and select which profile you'd like to go forward with per tab/app.
-For security reasons of course,
-first time use of a WebID in a certain app will ask for permissions you will explicitly have to grant.
-Also, you will be prompted to sign in with your IDP every time,
-but autofill already solves part of that specific inconvenience.
-
-### Multi-session across multiple tabs running the same application
-
-Depending on which app you use, this is possible or not.
-An example of an app where this is not possible, is <https://podpro.dev/>.
-The documentation at inrupt describes that Session data is actually not stored anywhere clientside, and
-every refresh the IDP is consulted to validate the running session.
-When you have two tabs with the same app,
-it might actually not be possible or easy to have the two sessions in parallel.
-Because when you log into another WebID in the other tab, and
-refresh the first tab, it will effectively retrieve the latest session.
-Storing sessions or tokens in localstorage or anywhere clientside is discouraged for security reasons.
-Perhaps with additional research, a workaround can be conceptualized that does not compromise security.
 
 ### End-to-end testing
 
