@@ -2,8 +2,8 @@
   "name": "solid-identity-manager",
   "version": "0.1.0",
   "scripts": {
-    "start": "webpack --watch --config webpack.dev.config.js",
-    "build": "webpack",
+    "start": "rm -rf dist && webpack --watch --config webpack.dev.config.js",
+    "build": "rm -rf dist && webpack",
     "build:dev": "webpack --config webpack.dev.config.js",
     "test": "PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1 playwright test",
     "test:ui": "PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1 playwright test --ui",

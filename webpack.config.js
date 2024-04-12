@@ -28,10 +28,12 @@ module.exports = {
           context: 'src/',
           from: 'manifest.json',
           transform: function (content) {
+            content = JSON.parse(content.toString());
+            delete content.key;
             // generates the manifest file using the package.json version
             return Buffer.from(
               JSON.stringify({
-                ...JSON.parse(content.toString()),
+                ...content,
                 version: packageJson.version,
               })
             );
